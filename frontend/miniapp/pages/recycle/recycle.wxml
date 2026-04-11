@@ -1,0 +1,152 @@
+<!-- 立即回收 -->
+<view class="page" style="padding-bottom:200rpx">
+
+  <!-- 价格头部 -->
+  <view class="card price-card">
+    <text class="price-title">旧衣物换现金</text>
+    <view class="price-row">
+      <text class="price-num">0.8</text>
+      <text class="price-unit">元/kg</text>
+    </view>
+  </view>
+
+  <!-- 可回收品类 -->
+  <view class="card">
+    <text class="cat-label">可回收品类展示如下：</text>
+    <view class="cat-grid">
+      <view
+        class="cat-item {{selectedCats[item.key] ? 'cat-active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="key"
+        bindtap="toggleCat"
+        data-key="{{item.key}}"
+      >
+        <text class="cat-emoji">{{item.emoji}}</text>
+        <text class="cat-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 免费上门取件 -->
+  <view class="card">
+    <text class="section-title">免费上门取件</text>
+
+    <!-- 取件地址：点击弹出自定义地址选择 -->
+    <view class="form-row" bindtap="chooseAddress">
+      <text class="form-label">取件地址</text>
+      <view class="form-right">
+        <text class="{{selectedAddress ? 'form-val' : 'form-placeholder'}}">{{selectedAddress || '请选择取件地址'}}</text>
+        <text class="form-arrow">›</text>
+      </view>
+    </view>
+    <view class="form-divider"></view>
+
+    <!-- 预约日期：用 picker 包裹，点击自动弹出日期选择 -->
+    <picker mode="date" value="{{pickerDate}}" start="{{minDate}}" end="{{maxDate}}" bindchange="onDateChange">
+      <view class="form-row">
+        <text class="form-label">预约日期</text>
+        <view class="form-right">
+          <text class="{{selectedDate ? 'form-val' : 'form-placeholder'}}">{{selectedDate || '请选择预约日期'}}</text>
+          <text class="form-arrow">›</text>
+        </view>
+      </view>
+    </picker>
+    <view class="form-divider"></view>
+
+    <!-- 预约时段：selector picker -->
+    <picker mode="selector" range="{{timeSlots}}" value="{{timeSlotIdx}}" bindchange="onTimeSlotChange">
+      <view class="form-row">
+        <text class="form-label">取件时段</text>
+        <view class="form-right">
+          <text class="{{selectedTimeSlot ? 'form-val' : 'form-placeholder'}}">{{selectedTimeSlot || '请选择取件时段'}}</text>
+          <text class="form-arrow">›</text>
+        </view>
+      </view>
+    </picker>
+
+  </view>
+
+  <!-- 预估重量 -->
+  <view class="card">
+    <text class="section-title">预估重量</text>
+    <view class="weight-chips">
+      <view
+        class="weight-chip {{selectedWeight === item.val ? 'chip-active' : ''}}"
+        wx:for="{{weightOptions}}"
+        wx:key="val"
+        bindtap="selectWeight"
+        data-val="{{item.val}}"
+      >
+        <text class="chip-main">{{item.label}}</text>
+        <text class="chip-sub">{{item.sub}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card notes-card">
+    <text class="section-title">备注</text>
+    <view class="quick-tags">
+      <view
+        class="qtag {{selectedTags[item] ? 'qtag-active' : ''}}"
+        wx:for="{{quickTags}}"
+        wx:key="*this"
+        bindtap="toggleTag"
+        data-tag="{{item}}"
+      >{{item}}</view>
+    </view>
+    <input
+      class="note-input"
+      placeholder="自定义备注..."
+      value="{{customNote}}"
+      bindinput="onNoteInput"
+    />
+  </view>
+
+</view>
+
+<!-- 底部提交栏 -->
+<view class="submit-bar">
+  <button class="btn-primary submit-btn" bindtap="handleSubmit" loading="{{submitting}}">
+    立即预约（免费上门）
+  </button>
+</view>
+
+<!-- 地址选择弹窗 -->
+<view class="modal-mask" wx:if="{{showAddressPicker}}" bindtap="closeAddressPicker">
+  <view class="modal-box" catchtap>
+    <view class="modal-hd">
+      <text class="modal-title">选择取件地址</text>
+      <text class="modal-close" bindtap="closeAddressPicker">✕</text>
+    </view>
+
+    <view wx:if="{{addresses.length === 0}}" class="empty" style="padding:60rpx 0">
+      <text class="empty-icon">📍</text>
+      <text>暂无地址，请先添加</text>
+      <button class="btn-sm" style="margin-top:24rpx;width:240rpx" bindtap="goAddAddress">去添加地址</button>
+    </view>
+
+    <scroll-view scroll-y class="addr-scroll" wx:else>
+      <view
+        class="addr-item {{selectedAddressId === item.id ? 'addr-selected' : ''}}"
+        wx:for="{{addresses}}"
+        wx:key="id"
+        bindtap="selectAddress"
+        data-id="{{item.id}}"
+        data-full="{{item.province}}{{item.city}}{{item.district}}{{item.detail}}"
+      >
+        <view class="addr-top">
+          <text class="addr-name">{{item.contact_name}}</text>
+          <text class="addr-phone">{{item.phone}}</text>
+          <view wx:if="{{item.is_default}}" class="tag tag-done" style="margin-left:10rpx;font-size:20rpx">默认</view>
+        </view>
+        <text class="addr-detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</text>
+        <text wx:if="{{selectedAddressId === item.id}}" class="addr-check">✓</text>
+      </view>
+    </scroll-view>
+
+    <button class="btn-sm" style="width:100%;margin-top:20rpx;height:80rpx" bindtap="goAddAddress">
+      + 新增地址
+    </button>
+  </view>
+</view>

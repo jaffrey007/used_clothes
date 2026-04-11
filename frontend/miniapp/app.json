@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/recycle/recycle",
+    "pages/orders/orders",
+    "pages/order-detail/order-detail",
+    "pages/profile/profile",
+    "pages/profile-edit/profile-edit",
+    "pages/address-list/address-list",
+    "pages/points/points"
+  ],
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4caf7d",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/recycle/recycle",
+        "text": "立即回收",
+        "iconPath": "images/recycle.png",
+        "selectedIconPath": "images/recycle-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user-active.png"
+      }
+    ]
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#4caf7d",
+    "navigationBarTitleText": "慢夏回收",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

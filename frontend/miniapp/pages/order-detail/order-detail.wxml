@@ -1,0 +1,89 @@
+<!-- 订单详情 -->
+<view class="page" wx:if="{{order}}">
+
+  <!-- 状态卡片 -->
+  <view class="card status-card">
+    <text class="status-icon">{{order.statusIcon}}</text>
+    <view class="status-info">
+      <text class="status-name">{{order.statusLabel}}</text>
+      <text class="status-desc">{{order.statusDesc}}</text>
+    </view>
+  </view>
+
+  <!-- 取件信息 -->
+  <view class="card info-card">
+    <text class="info-title">取件信息</text>
+    <view class="info-row">
+      <text class="info-key">联系人</text>
+      <text class="info-val">{{order.addr_contact}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-key">联系电话</text>
+      <text class="info-val">{{order.addr_phone}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-key">取件地址</text>
+      <text class="info-val">{{order.addr_full}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-key">预约时间</text>
+      <text class="info-val">{{order.scheduledTimeStr}}</text>
+    </view>
+  </view>
+
+  <!-- 回收品类 -->
+  <view class="card info-card">
+    <text class="info-title">回收品类</text>
+    <view class="cat-tags">
+      <view class="cat-tag-big" wx:for="{{order.catLabels}}" wx:key="*this" wx:for-item="cat">
+        {{cat}}
+      </view>
+    </view>
+    <view class="info-row" wx:if="{{order.estimated_weight > 0}}">
+      <text class="info-key">预估重量</text>
+      <text class="info-val">{{order.weightLabel}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.actual_weight}}">
+      <text class="info-key">实际重量</text>
+      <text class="info-val">{{order.actual_weight}} kg</text>
+    </view>
+    <view class="info-row" wx:if="{{order.final_amount}}">
+      <text class="info-key">结算金额</text>
+      <text class="info-val text-primary" style="font-weight:700;font-size:32rpx">¥{{order.final_amount}}</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card info-card" wx:if="{{order.notes}}">
+    <text class="info-title">备注</text>
+    <text class="notes-text">{{order.notes}}</text>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card info-card">
+    <text class="info-title">订单信息</text>
+    <view class="info-row">
+      <text class="info-key">订单编号</text>
+      <text class="info-val" style="font-size:22rpx">{{order.order_no}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-key">下单时间</text>
+      <text class="info-val">{{order.createdStr}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.cancel_reason}}">
+      <text class="info-key">取消原因</text>
+      <text class="info-val">{{order.cancel_reason}}</text>
+    </view>
+  </view>
+
+  <!-- 取消按钮 -->
+  <view style="padding:20rpx 24rpx 60rpx" wx:if="{{order.status <= 1}}">
+    <button class="cancel-btn" bindtap="cancelOrder">取消订单</button>
+  </view>
+
+</view>
+
+<view wx:else class="empty">
+  <text class="empty-icon">⏳</text>
+  <text>加载中...</text>
+</view>

@@ -1,0 +1,225 @@
+/* ─── 未登录引导页 ─── */
+.login-gate {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #e8f5ee 0%, #f5f5f5 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.login-gate-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20rpx;
+  width: 100%;
+}
+
+.gate-emoji  { font-size: 100rpx; line-height: 1; }
+.gate-title  { font-size: 52rpx; font-weight: 800; color: #1a1a1a; margin-bottom: 4rpx; }
+.gate-sub    { font-size: 28rpx; color: #666; line-height: 1.7; max-width: 480rpx; }
+
+.wx-login-btn {
+  width: 560rpx !important;
+  height: 96rpx !important;
+  font-size: 34rpx !important;
+  border-radius: 50rpx !important;
+  margin-top: 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(76,175,125,0.35);
+}
+
+.gate-hint { font-size: 22rpx; color: #bbb; margin-top: 4rpx; }
+
+/* ─── 已登录 profile ─── */
+.profile-page { padding-bottom: 60rpx; }
+
+/* Header */
+.profile-header {
+  background: linear-gradient(135deg, #4caf7d, #2e7d52);
+  padding: 60rpx 30rpx 40rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  border: 4rpx solid rgba(255,255,255,0.6);
+  flex-shrink: 0;
+}
+
+.user-info { flex: 1; }
+
+.user-name  {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8rpx;
+}
+
+.user-phone {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.8);
+}
+
+.points-badge {
+  background: rgba(255,255,255,0.2);
+  border-radius: 20rpx;
+  padding: 16rpx 24rpx;
+  text-align: center;
+}
+
+.pts-val {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #fff;
+}
+
+.pts-label {
+  display: block;
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.85);
+}
+
+/* Shortcuts */
+.shortcuts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 30rpx 20rpx;
+}
+
+.shortcut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.sc-icon  { font-size: 52rpx; }
+.sc-label { font-size: 22rpx; color: #555; }
+
+/* Eco stats */
+.eco-card {
+  display: flex;
+  flex-direction: row;
+  padding: 24rpx 20rpx;
+}
+
+.eco-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.eco-val   { font-size: 36rpx; font-weight: 700; }
+.eco-label { font-size: 20rpx; color: #888; text-align: center; }
+
+.eco-divider {
+  width: 1rpx;
+  background: #f0f0f0;
+  margin: 8rpx 0;
+}
+
+/* Invite */
+.invite-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 30rpx;
+  background: linear-gradient(135deg, #f0f4ff, #e8eeff);
+  border: 1rpx solid #c5cff7;
+}
+
+.invite-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 6rpx;
+}
+
+.invite-sub {
+  display: block;
+  font-size: 24rpx;
+  color: #555;
+}
+
+.invite-btn {
+  background: #4169e1;
+  color: #fff;
+  height: 68rpx;
+  padding: 0 28rpx;
+  border-radius: 34rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Service grid */
+.service-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.svc-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 28rpx 0;
+}
+
+.svc-icon  { font-size: 48rpx; }
+.svc-label { font-size: 22rpx; color: #555; }
+
+/* Logout */
+.logout-btn {
+  background: #fff !important;
+  color: #ee0a24 !important;
+  border: 1rpx solid #ee0a24 !important;
+  border-radius: 50rpx;
+  font-size: 30rpx;
+  height: 90rpx;
+  width: 100%;
+}
+
+/* Modal */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 40rpx 30rpx calc(60rpx + env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.modal-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}

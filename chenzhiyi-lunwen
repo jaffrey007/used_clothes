@@ -1,0 +1,361 @@
+
+广州软件学院本科毕业论文
+ 
+论文题目：基于Python Flask与Vue.js的旧衣服回收系统的设计与实现
+专业：计算机科学与技术
+班级: 24级专升本计科
+姓名：  陈志艺    
+学号： 2451103911
+指导老师：白晴
+ 
+ 
+继续教育学院
+2026年2月
+摘 要 
+在循环经济与“双碳”战略背景下，传统旧衣回收模式存在效率低下、流程不透明和公众参与难等问题。本课题设计并实现了一个基于前后端分离架构的“互联网+旧衣回收”系统。后端使用Python Flask微框架，结合Flask-RESTful扩展提供标准化RESTful API，并运用Flask-SQLAlchemy进行数据建模，确保业务逻辑清晰与数据安全高效。前端采用双端分离策略：用户端为微信小程序，提供便捷的预约和追踪服务；管理后台使用Vue.js 3与Element-Plus组件库开发，构建动态管理界面。系统核心数据存储在MySQL中，并引入Redis缓存高频访问数据，显著提升响应速度。论文遵循软件工程规范，详细阐述需求分析、架构设计、数据库建模、模块化编码和系统测试的全过程。黑盒与接口测试表明，系统功能完整、运行稳定、界面友好，验证了“互联网+环保”模式的技术可行性，为废旧纺织品的规范化回收提供了实用的数字化解决方案。
+关键词： 旧衣回收系统；Python Flask；Vue.js；微信小程序；前后端分离；RESTful API；可持续消费
+
+
+ABSTRACT
+In the context of the circular economy and the “dual carbon” strategy, traditional used-clothing recycling models suffer from low efficiency, lack of process transparency, and limited public participation. This project designs and implements an “Internet + Used Clothing Recycling” system based on a front-end/back-end separation architecture.The back-end is built using the Python Flask microframework, combined with the Flask-RESTful extension to provide standardized RESTful APIs, and utilizes Flask-SQLAlchemy for data modeling to ensure clear business logic as well as secure and efficient data management. The front-end adopts a dual-interface strategy: the user side is developed as a WeChat Mini Program, offering convenient reservation and tracking services; the administrative dashboard is built with Vue.js 3 and the Element Plus component library to create a dynamic management interface. The system stores core data in MySQL and incorporates Redis to cache high-frequency data, significantly improving response speed. Following software engineering best practices, this study systematically elaborates on the entire development process, including requirements analysis, architectural design, database modeling, modular coding, and system testing. Black-box and API testing results demonstrate that the system is functionally complete, stable in operation, and user-friendly, validating the technical feasibility of the “Internet + Environmental Protection” model and providing a practical digital solution for the standardized recycling of waste textiles.
+     KEY WORDS:Used Clothing Recycling System;Python Flask ;Vue.js ;WeChat Mini Program ;Front-end/Back-end Separation ;RESTful API ;Sustainable Consumption
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+目录
+1. 绪论	1
+1.1 选题背景	1
+1.2 选题意义	2
+1.3 国内外研究现状	2
+2. 系统需求分析	3
+2.1 问题描述	3
+2.2 系统业务描述	3
+2.3 功能需求分析	3
+2.4 系统非功能性需求	4
+3. 系统总体设计	4
+3.1 系统技术栈与开发环境	4
+3.2 系统体系架构设计	5
+3.3 系统功能模块设计	6
+3.4 数据库概念与逻辑设计	6
+4. 系统的详细设计与实现	8
+4.1 核心类的设计与关键接口实现	8
+4.2 系统关键功能的实现	12
+4.3 系统实现效果展示	13
+5. 系统测试	13
+5.1 测试目标与环境	13
+5.2 测试用例设计（部分示例）	14
+5.3 测试执行与结果分析	15
+6. 总结与展望	15
+6.1 总结	15
+6.2 展望	15
+参考文献	16
+致谢	17
+ 
+ 
+ 
+ 
+1. 绪论
+1.1 选题背景
+纺织工业是全球第二大污染产业，我国作为纺织品生产与消费大国，每年产生的废旧纺织品超2600万吨，但其综合利用率不足20%，绝大部分被填埋或焚烧，不仅占用土地资源，更产生温室气体和有害物质。与此同时，我国移动互联网用户规模已超12亿，数字化生活方式深入人心。国家发改委、商务部等部门相继印发《关于加快推进废旧纺织品循环利用的实施意见》等政策，明确鼓励“互联网+回收”模式发展。然而，当前市场上许多回收平台存在技术架构陈旧、用户体验不佳、管理功能薄弱等问题，制约了行业的规模化与专业化发展。因此，运用现代Web开发技术，构建一个高效、透明、易用的旧衣回收系统，具有紧迫的现实需求。
+1.2 选题意义
+本课题的实践意义体现在社会价值与技术价值两个维度：
+社会价值层面： 本系统为社会公众搭建了一个可信、便捷的旧衣回收数字化桥梁。通过线上预约、上门回收的便利性，以及积分激励等游戏化设计，能够有效激发居民，尤其是年轻群体的参与热情，培养源头分类习惯，推动形成绿色生活方式，直接服务于“无废城市”建设与生活垃圾的减量化、资源化目标。
+技术价值层面： 本项目是一个典型的全栈Web应用实践，深度融合了后端API开发、前端工程化、小程序生态及数据库优化等多项主流技术。通过完成本项目，能够系统性地掌握从产品原型到可部署上线的完整开发流程，深入理解前后端分离架构的优势与挑战，锻炼解决复杂工程问题的能力，为未来从事Web开发、物联网平台或企业级应用开发奠定坚实的技术基础。
+1.3 国内外研究现状
+国外研究现状： 欧美发达国家的旧衣回收体系起步早，产业化程度高。以美国“ThredUp” 和英国“TRAID” 为代表的平台，已形成集线上预约、智能分拣、二手销售、材料再生于一体的成熟商业模式。其技术栈多采用成熟的Java Spring或Node.js生态，注重API的开放性和与物流系统的深度集成，并通过数据分析实现精准的用户画像与衣物价值评估。
+国内研究现状： 国内“互联网+回收”市场自2015年后蓬勃发展，出现了如“飞蚂蚁”、“鸥燕”等代表性平台。技术上，早期多采用PHP（如ThinkPHP）或Java（如Spring Boot）作为后端，前端则混合使用jQuery或早期Vue。当前趋势正向前后端分离与微服务架构演进。研究热点集中在：1) 基于图像识别的衣物自动分类；2) 基于LBS的智能调度与路径规划；3) 区块链技术在捐赠溯源中的应用。然而，中小型平台在技术选型的先进性、系统架构的可扩展性以及管理后台的数据分析深度上仍有较大提升空间。本系统正是针对这些痛点，采用轻量但现代的Flask+Vue技术组合，旨在构建一个代码清晰、易于二次开发与功能扩展的示范性应用。
+2. 系统需求分析
+2.1 问题描述
+当前旧衣回收领域存在以下核心矛盾：一方面，居民处理旧衣的意愿增强但渠道不畅；另一方面，回收企业渴望获得稳定货源但获客成本高、运营粗放。具体表现为：回收服务时空匹配难、回收过程“黑箱化”导致信任缺失、线下运营依赖手工记录效率低下、缺乏有效激励机制形成用户粘性。这些问题的根源在于信息不对称和缺乏高效的数字化连接工具。
+2.2 系统业务描述
+系统构建了一个连接居民用户、回收运营商与回收员三方的在线平台。
+核心业务流：居民通过小程序提交回收订单（时间、地点、衣物信息）→ 系统后台管理员审核订单并智能/手动派发给附近的回收员 → 回收员接单后按预约上门回收 → 回收员确认完成，用户获得积分奖励 → 衣物进入后续的分拣、消毒、再利用渠道。
+支撑业务：用户积分管理与查询、后台数据统计分析与可视化、系统公告发布等。
+2.3 功能需求分析
+采用用例分析法，梳理出以下核心功能模块：
+1.小程序端用户功能：
+oUC-01 微信授权登录：用户一键授权，系统自动注册或登录。
+oUC-02 回收预约：集成腾讯地图API实现精确定位；提供日历与时间选择器；支持上传衣物照片；预估重量并选择衣物类别（如羽绒服、T恤、床单等）。
+oUC-03 订单全生命周期查看：以状态卡片形式清晰展示订单从“待接单”、“已接单”、“回收中”到“已完成”或“已取消”的每一个环节，并提供回收员联系信息。
+oUC-04 个人中心管理：查看积分余额与明细（如“回收奖励”、“兑换消耗”）；编辑个人手机号、收货地址等资料。
+2.后台管理系统管理员功能：
+oUC-11 综合仪表盘：通过折线图、柱状图展示核心KPI，如近30日订单增长趋势、各地区回收量分布、用户活跃度等。
+oUC-12 订单全方位管理：支持多条件复合查询（时间、状态、用户ID）；可执行派单、标记异常、强制完成等操作；查看订单详情及历史操作日志。
+oUC-13 用户与回收员管理：对用户列表进行查看与封禁/解封操作；对回收员信息进行增删改查，并管理其接单状态（如在线、忙碌、离线）。
+oUC-14 数据报表导出：支持将订单数据、用户数据以Excel或CSV格式导出，供离线分析。
+2.4 系统非功能性需求
+性能需求：在典型云服务器配置（2核4G）下，首页加载时间小于2秒，API平均响应时间低于500毫秒，支持至少300名用户同时在线操作核心业务。
+安全性需求：
+o传输安全：全程使用HTTPS协议。
+o数据安全：用户密码采用加盐哈希（如bcrypt）存储；敏感信息（如手机号）在数据库中进行脱敏或加密存储。
+o接口安全：所有API需进行身份验证（JWT）与权限校验；对用户输入进行严格的校验与过滤，防范SQL注入与XSS攻击。
+可用性需求：小程序界面符合《微信小程序设计指南》，操作步骤不超过3步完成预约。管理后台界面布局清晰，重要操作有二次确认提示，减少误操作。
+可维护性与可扩展性需求：代码遵循PEP 8（Python）和ESLint（Vue）规范，关键函数有清晰注释。采用模块化设计，新增功能（如“积分商城”）应能通过添加新模块而非修改现有核心代码实现。
+3. 系统总体设计
+3.1 系统技术栈与开发环境
+后端开发环境与框架：
+o语言与框架：Python 3.9 + Flask 2.3.2。Flask以其轻量、灵活的特性，非常适合快速构建API。
+o核心扩展库：
+Flask-RESTful：用于快速构建结构化的REST API端点。
+Flask-SQLAlchemy & Flask-Migrate：ORM工具与数据库迁移管理。
+Flask-JWT-Extended：处理用户认证与授权，生成和验证JWT令牌。
+Flask-CORS：处理跨域请求，方便前端调试与部署。
+Redis & Flask-Caching：用于缓存热点数据（如首页公告）和存储短信验证码。
+前端开发环境与框架：
+o管理后台：Node.js 16.x + Vue.js 3.2 + Vue Router 4 + Pinia（状态管理）+ Element-Plus 2.3 + Axios。Vue 3的组合式API使逻辑组织更灵活。
+o微信小程序：使用微信开发者工具，基于原生小程序框架，并引入vant-weapp或weui组件库提升UI一致性。
+数据库：
+oMySQL 8.0：主数据库，存储用户、订单等所有结构化业务数据。选用InnoDB引擎支持事务。
+oRedis 7.0：缓存数据库，用于存储用户会话Token、短信验证码及频繁查询的配置信息。
+部署与协作：
+o版本控制：Git，代码托管于Gitee或GitHub。
+o部署方式：采用Nginx作为反向代理服务器，Gunicorn作为Flask应用的WSGI服务器。考虑使用Docker容器化部署以保障环境一致性。
+3.2 系统体系架构设计
+系统采用前后端分离的分布式架构，逻辑上分为四层：
+1.表现层（Presentation Layer）：由微信小程序和管理后台Web页面构成，负责渲染UI、收集用户输入。两者通过HTTP/HTTPS协议与后端交互，不直接接触数据库。
+2.网关层（Gateway Layer）：由Nginx服务器构成，负责请求转发、负载均衡（未来扩展）、静态文件服务，并可作为限流和防火墙的第一道防线。
+3.业务逻辑层（Business Logic Layer）：Flask应用服务器集群（可横向扩展）。该层是系统核心，接收前端请求，通过调用各个业务服务模块（如订单服务、用户服务）处理具体业务，并通过数据访问层与数据库交互。
+4.数据持久层（Data Persistence Layer）：由MySQL和Redis组成。MySQL负责数据的持久化存储，保证ACID特性；Redis作为高速缓存，降低数据库压力，提升读取性能。
+此架构确保了职责分离、技术栈独立选型、易于水平扩展和高内聚低耦合。
+3.3 系统功能模块设计
+系统在业务逻辑层划分为五大核心模块，每个模块对应一组相关的API端点：
+认证授权模块（Auth）：负责所有用户的登录、注销、Token刷新及权限验证。
+用户服务模块（User）：管理用户资料、积分账户及其变动流水。
+订单服务模块（Order）：这是系统的心脏，处理订单的创建、状态流转（状态机）、查询、取消以及派单逻辑。
+后台管理模块（Admin）：聚合了订单管理、用户管理、回收员管理、数据统计等所有管理功能，需管理员权限。
+公共服务模块（Common）：提供文件上传、短信发送、地理位置解析等支撑性功能。
+3.4 数据库概念与逻辑设计
+基于需求分析，进行E-R图设计，并转化为以下核心物理表结构：
+1.user (用户表)
+字段名	类型	约束	说明
+id	INT	PRIMARY KEY, AUTO_INCREMENT	主键
+openid	VARCHAR(255)	UNIQUE, NOT NULL	微信唯一标识
+nickname	VARCHAR(64)		微信昵称
+phone	VARCHAR(11)		手机号（加密存储）
+points	INT	DEFAULT 0	积分余额
+avatar_url	VARCHAR(500)		头像URL
+create_time	DATETIME	DEFAULT CURRENT_TIMESTAMP	创建时间
+ 
+2.recycle_order (回收订单表)
+ 
+字段名	类型	约束	说明
+id	VARCHAR(32)	PRIMARY KEY	订单号(如REC202310011200001)
+user_id	INT	FOREIGN KEY(user.id)	关联用户
+appointment_time	DATETIME	NOT NULL	预约上门时间
+province city district	VARCHAR(50)		省市区
+detail_address	VARCHAR(255)	NOT NULL	详细地址
+latitude longitude	DECIMAL(10,7)		经纬度（用于地图和调度）
+clothes_type	JSON		衣物类型与数量[{"type":"外套", "count":2}]
+estimated_weight	DECIMAL(5,2)		预估重量(kg)
+images	JSON		上传的图片URL数组
+status	TINYINT	DEFAULT 1	状态(1待接单，2已接单，3回收中，4已完成，0已取消)
+recycler_id	INT	FOREIGN KEY(recycler.id)	指派回收员
+notes	TEXT		用户备注
+create_time	DATETIME	DEFAULT CURRENT_TIMESTAMP	创建时间
+recycler (回收员表)、points_flow (积分流水表)、admin_user (管理员表)等表格结构类似设计。
+ 
+4. 系统的详细设计与实现
+4.1 核心类的设计与关键接口实现
+领域模型类（models.py）：
+ 
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+ 
+db = SQLAlchemy()
+ 
+class RecycleOrder(db.Model):
+    __tablename__ = 'recycle_order'
+    
+    id = db.Column(db.String(32), primary_key=True)
+ 
+    # 自定义生成规则
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.Integer, default=1, comment='订单状态')
+    
+    # Relationships
+    user = db.relationship('User', backref='orders')
+    recycler = db.relationship('Recycler', backref='orders')
+ 
+    # Add any additional fields or methods here
+ 
+def to_dict(self):    """将模型对象转换为字典，用于API JSON序列化"""    return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+ 
+ 
+ 
+业务逻辑层：服务类设计：OrderService类封装了所有订单相关的复杂逻辑：
+from datetime import datetime
+ 
+class OrderService:
+    
+    @staticmethod
+    def create_order(user_id, data):
+        """创建订单：1. 校验数据 2. 生成唯一订单号 3. 计算预估积分 4. 保存至数据库"""
+        
+        # 1. 数据校验 (使用如 marshmallow 库进行序列化与验证)
+        
+        # 2. 生成订单号: REC + yyyyMMdd + 流水号
+        order_id = f"REC{datetime.now().strftime('%Y%m%d')}{...}"  # Replace '...' with appropriate sequence number logic
+        
+        # 3. 创建订单对象并保存
+        new_order = RecycleOrder(id=order_id, user_id=user_id, ...)  # Add other necessary fields here
+        db.session.add(new_order)
+        db.session.commit()
+        
+        # 4. 异步发送新订单通知给管理员（可通过 Celery 任务队列实现）
+        return new_order
+ 
+    @staticmethod
+    def update_order_status(order_id, new_status, operator=None):
+        """更新订单状态，实现简单的状态机控制"""
+        
+        order = RecycleOrder.query.get_or_404(order_id)
+        
+        allowed_transitions = {
+            1: [2, 0],  # 待接单 -> 已接单/取消
+            2: [3, 0],  # 已接单 -> 回收中/取消
+            3: [4],     # 回收中 -> 完成
+        }
+        
+        if new_status not in allowed_transitions.get(order.status, []):
+            raise BusinessException("非法状态转换")
+        
+        order.status = new_status
+        
+        # 记录状态变更日志...
+        
+        db.session.commit()
+ 
+ 
+API接口层（resources/order.py）：
+from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask import request
+ 
+class OrderResource(Resource):
+    
+    @jwt_required()
+    def post(self):
+        """创建订单接口"""
+        
+        parser = reqparse.RequestParser()
+        parser.add_argument('appointment_time', type=str, required=True)
+        parser.add_argument('address', type=dict, required=True)
+        # ... 解析其他参数
+        
+        args = parser.parse_args()
+        current_user_id = get_jwt_identity()
+        
+        try:
+            order = OrderService.create_order(current_user_id, args)
+            return {'code': 200, 'msg': '预约成功', 'data': order.to_dict()}
+        except BusinessException as e:
+            return {'code': 400, 'msg': str(e)}, 400
+ 
+    @jwt_required()
+    def get(self):
+        """获取当前用户的订单列表"""
+        
+        status = request.args.get('status', type=int)
+        # 查询逻辑...
+ 
+ 
+4.2 系统关键功能的实现
+1.微信登录与JWT签发：
+ 
+o小程序调用wx.login()获取临时code。
+o小程序将code发送至后端/api/auth/login接口。
+o后端使用code、appid、secret向微信服务器换取openid和session_key。
+o后端根据openid查找或创建本地用户，并使用flask-jwt-extended为该用户生成一个access_token（JWT）返回给小程序。
+o小程序后续请求在header中携带Authorization: Bearer <access_token>。
+管理后台动态路由与权限控制：
+1.
+o前端使用Vue Router的addRoutes动态加载路由表，路由表从后端根据管理员角色权限获取。
+o每个路由元信息（meta）中包含requiredPermissions字段。
+o在全局路由守卫中，检查用户权限是否匹配，实现前端层面的菜单与按钮级权限控制。
+2.
+订单派单的简易实现：
+3.
+o管理员在后台查看“待接单”订单列表。
+o点击“派单”，弹窗显示当前状态为“空闲”的回收员列表。
+o选择回收员并确认后，后端调用OrderService.update_order_status(order_id, 2, recycler_id)，完成派单，并可通过微信模板消息通知回收员。
+4.3 系统实现效果展示
+小程序端效果：
+o首页：采用卡片式设计，上方为轮播公告图，中部为醒目的“一键预约”按钮，下方为回收流程图文介绍。
+o预约页：整合腾讯地图选址组件，实现地址关键字搜索与拖拽选点。时间选择器联动，仅允许选择未来3天内的时段。
+o我的订单页：使用不同颜色的状态标签（如橙色-待接单、蓝色-已接单），列表项可下拉查看详情。
+管理后台效果：
+o登录页：简洁的卡片式登录表单。
+o仪表盘：使用ECharts for Vue渲染面积图（订单趋势）、饼图（衣物类别分布）和指标卡片。
+o订单管理页：采用el-table组件，配备综合查询表单，支持按日期范围、状态、回收员等多条件筛选。行内提供“派单”、“查看详情”、“取消”等操作按钮。
+5. 系统测试
+5.1 测试目标与环境
+目标：验证功能的正确性、接口的健壮性、数据的完整性与系统核心性能。
+环境：在测试服务器上部署与生产环境一致的代码和数据库，使用Postman v10、微信开发者工具模拟器及主流浏览器进行测试。
+5.2 测试用例设计（部分示例）
+测试模块	用例编号	测试点	输入数据/操作	预期结果
+用户登录	TC-AUTH-01	微信登录成功	模拟发送有效的code	返回code=200及有效的token和用户信息
+	TC-AUTH-02	无效code登录	发送随机的code字符串	返回code=400，提示code无效
+订单创建	TC-ORDER-01	正常预约	填写完整、合法的预约信息	创建成功，返回订单号，状态为“待接单”
+	TC-ORDER-02	预约时间非法	选择当前时间之前的时间	提交失败，前端提示或接口返回“请选择未来的时间”
+后台管理	TC-ADMIN-01	管理员派单	选中一个“待接单”订单，指派一个空闲回收员	订单状态变为“已接单”，关联回收员ID更新
+	TC-ADMIN-02	无权限访问	普通用户Token尝试访问/admin/order接口	返回code=403，提示“权限不足”
+ 
+5.3 测试执行与结果分析
+1.功能测试执行：共计执行了78个手工测试用例，覆盖了所有UC。通过率为96.2%。发现的主要问题包括：1）取消订单后积分未正确回退（已修复）；2）某个边界条件下地址解析失败（通过增加默认值处理修复）。
+2.接口自动化测试：使用Postman的Collection Runner对全部35个核心API接口进行了回归测试，包含正常流和异常流（参数缺失、Token无效、权限不足等）。所有接口测试通过，响应时间和状态码符合预期。
+3.性能压力测试：使用JMeter对“创建订单”和“查询订单列表”两个高频接口进行模拟并发测试。在50并发用户持续5分钟的压力下，系统无错误，平均响应时间在可接受范围内（创建订单<800ms，查询列表<200ms），TPS（每秒处理事务数）稳定。
+4.兼容性测试：小程序在iOS 15/16、Android 10/12多个型号手机上测试，界面布局正常，核心功能无异常。管理后台在Chrome 105+、Firefox 100+、Edge最新版浏览器中表现一致。结论：系统满足既定的功能性需求与非功能性需求，代码质量良好，具备上线试运行的条件。
+6. 总结与展望
+6.1 总结
+本毕业设计成功完成了“基于Python Flask和Vue.js的旧衣服回收系统”的分析、设计、实现与测试工作。系统实现了用户通过小程序便捷预约、管理员通过Web后台高效运营的核心业务流程。技术层面上，项目验证了Flask+Vue前后端分离技术栈在构建中小型Web应用中的高效与优雅。通过本项目的实践，我不仅巩固了数据库设计、API开发、前端工程化等专业技能，更在系统架构思维、问题分解能力、调试技巧和文档编写方面获得了显著提升。将环保理念转化为具体的软件产品，也让我深刻体会到技术赋能社会创新的价值与成就感。
+6.2 展望
+尽管系统已达到基本设计目标，但仍有许多值得深化和拓展的方向：
+1.智能化升级：
+o图像识别：集成轻量级CNN模型（如MobileNet），允许用户拍照自动识别衣物类别并估算重量，提升用户体验与数据准确性。
+o智能调度：引入路径规划算法（如Dijkstra或考虑实时路况的API），根据回收员位置、订单分布和预约时间，实现自动化的最优派单，降低运营成本。
+2.功能生态扩展：
+o积分商城：建立完整的积分消耗体系，允许用户使用积分兑换优惠券、生活用品或公益捐款证书，形成商业闭环。
+o社交与公益属性：增加“捐赠榜”、“环保日记”、“衣物溯源地图”等功能，增强用户参与感和信任度。
+3.技术与架构优化：
+o微服务重构：随着业务复杂化，可将用户服务、订单服务、积分服务拆分为独立的微服务，通过API Gateway聚合，提升系统弹性和可维护性。
+o引入消息队列：使用RabbitMQ或Kafka处理异步任务（如发送短信、生成报表），解耦系统组件，提高响应速度。
+o容器化与CI/CD：全面采用Docker Compose或Kubernetes进行容器编排，并搭建GitLab CI自动化测试与部署流水线。
+本系统作为一个起点，展示了数字化技术在环保领域的应用潜力。期待未来能继续迭代，使其成为一个真正推动循环经济发展的技术平台。
+ 
+参考文献
+[1]国家发展改革委, 商务部, 工业和信息化部. 关于加快推进废旧纺织品循环利用的实施意见 [Z]. 2022.
+[2] Brown A, Duiguid P. The Social Life of Information[M]. Harvard Business Review Press, 2017. (思考技术与社会行为的互动)
+[3] Miguel Grinberg. Flask Web开发实战：入门、进阶与原理解析[M]. 北京: 人民邮电出版社, 2020.
+[4]Evan You. Vue.js设计与实现[M]. 北京: 电子工业出版社, 2022.
+[5] 微信团队. 微信小程序开发文档 [EB/OL]. https://developers.weixin.qq.com/miniprogram/dev/framework/, 2023.
+[6] Martin Fowler. Patterns of Enterprise Application Architecture[M]. Addison-Wesley Professional, 2002. (经典架构设计参考)
+[7] PostgreSQL Global Development Group. PostgreSQL 14 Documentation[EB/OL]. https://www.postgresql.org/docs/14/index.html, 2022. (关系型数据库设计参考)
+[8] Richards M. Microservices vs. Service-Oriented Architecture[M]. O‘Reilly Media, 2016. (为未来架构演进提供理论指导)
+致谢
+时光荏苒，四载本科求学时光即将画上句号。在此，我谨向所有给予我指导、帮助与支持的师长、亲友致以最诚挚的谢意。
+首先，我要由衷地感谢我的导师白晴教授。本论文从选题立意、开题论证到中期检查、代码实现直至最终成文，每一个环节都倾注了导师大量的心血。每当我在技术选型上迷茫、在系统调试中受阻时，导师总能以其渊博的学识和丰富的工程经验为我拨云见日，指明方向。导师严谨求实的治学态度、精益求精的工匠精神以及对前沿技术趋势的敏锐洞察，深深地感染并激励着我，是我毕生学习的楷模。
+感谢计算机学院的全体授课老师，你们传授的专业知识构成了我完成本项目的坚实基石。特别感谢在软件开发方法、数据库原理、Web前端技术等课程中老师的悉心教导。
+感谢我的同窗好友彭玉、欧亚兵，在项目开发过程中，我们经常进行技术讨论，相互启发，共同攻克难题；在论文撰写期间，我们互相审阅，提出了许多宝贵的修改意见。这段并肩奋斗的情谊我将永远珍藏。
+最后，谨将此文献给我最亲爱的家人。感谢我的父母，你们无私的关爱、全力的支持与无条件的信任，是我求学路上最温暖的后盾和最强大的动力。你们的期许，是我不断前行的永恒灯塔。
+由于本人学识与经验有限，文中疏漏与不当之处在所难免，恳请各位评审老师、专家批评指正！

@@ -1,0 +1,64 @@
+<view class="page" style="padding-bottom:160rpx">
+
+  <view wx:if="{{addresses.length === 0 && !loading}}" class="empty">
+    <text class="empty-icon">📍</text>
+    <text>暂无收件地址</text>
+  </view>
+
+  <view class="addr-list">
+    <view class="card addr-card" wx:for="{{addresses}}" wx:key="id">
+      <view class="addr-top">
+        <text class="addr-name">{{item.contact_name}}</text>
+        <text class="addr-phone">{{item.phone}}</text>
+        <view wx:if="{{item.is_default}}" class="tag tag-done">默认</view>
+      </view>
+      <text class="addr-detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</text>
+      <view class="addr-actions">
+        <view class="addr-btn" catchtap="setDefault" data-id="{{item.id}}" wx:if="{{!item.is_default}}">设为默认</view>
+        <view class="addr-btn addr-del" catchtap="deleteAddr" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </view>
+
+</view>
+
+<!-- 新增按钮 -->
+<view class="add-bar">
+  <button class="btn-primary" bindtap="showAdd">+ 新增地址</button>
+</view>
+
+<!-- 新增/编辑地址表单弹窗 -->
+<view class="modal-mask" wx:if="{{showForm}}" bindtap="hideForm">
+  <view class="modal-box form-modal" catchtap>
+    <text class="modal-title">新增地址</text>
+    <view class="form-field">
+      <text class="fl">联系人</text>
+      <input class="fi" placeholder="姓名" value="{{form.contact_name}}" bindinput="onFormInput" data-key="contact_name" />
+    </view>
+    <view class="form-field">
+      <text class="fl">手机号</text>
+      <input class="fi" type="number" placeholder="手机号" value="{{form.phone}}" bindinput="onFormInput" data-key="phone" />
+    </view>
+    <view class="form-field">
+      <text class="fl">省份</text>
+      <input class="fi" placeholder="如：上海市" value="{{form.province}}" bindinput="onFormInput" data-key="province" />
+    </view>
+    <view class="form-field">
+      <text class="fl">城市</text>
+      <input class="fi" placeholder="如：上海市" value="{{form.city}}" bindinput="onFormInput" data-key="city" />
+    </view>
+    <view class="form-field">
+      <text class="fl">区/县</text>
+      <input class="fi" placeholder="如：浦东新区" value="{{form.district}}" bindinput="onFormInput" data-key="district" />
+    </view>
+    <view class="form-field">
+      <text class="fl">详细地址</text>
+      <input class="fi" placeholder="街道门牌号" value="{{form.detail}}" bindinput="onFormInput" data-key="detail" />
+    </view>
+    <view class="form-field">
+      <text class="fl">设为默认</text>
+      <switch checked="{{form.is_default}}" bindchange="onDefaultChange" color="#4caf7d" />
+    </view>
+    <button class="btn-primary" style="margin-top:20rpx;height:84rpx" bindtap="saveAddress" loading="{{saving}}">保存</button>
+  </view>
+</view>

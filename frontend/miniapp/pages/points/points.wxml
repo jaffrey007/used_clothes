@@ -1,0 +1,30 @@
+<view class="page">
+
+  <!-- 积分顶部展示 -->
+  <view class="pts-hero">
+    <text class="pts-big">{{summary.balance || 0}}</text>
+    <text class="pts-label">当前积分</text>
+    <text class="pts-earned">累计获得 {{summary.total_earned || 0}} 积分</text>
+  </view>
+
+  <!-- 明细列表 -->
+  <view class="card" style="margin-top:20rpx">
+    <text class="section-title">积分明细</text>
+
+    <view wx:if="{{records.length === 0}}" class="empty" style="padding:60rpx 0">
+      <text class="empty-icon">🏅</text>
+      <text>暂无积分记录</text>
+    </view>
+
+    <view class="record-item" wx:for="{{records}}" wx:key="id">
+      <view class="record-left">
+        <text class="record-note">{{item.note || item.change_type}}</text>
+        <text class="record-date">{{item.dateStr}}</text>
+      </view>
+      <text class="record-amount {{item.amount > 0 ? 'amount-earn' : 'amount-spend'}}">
+        {{item.amount > 0 ? '+' : ''}}{{item.amount}}
+      </text>
+    </view>
+  </view>
+
+</view>

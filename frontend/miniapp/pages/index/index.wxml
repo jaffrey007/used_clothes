@@ -1,0 +1,73 @@
+<!-- 首页 -->
+<view class="page">
+
+  <!-- Banner 轮播 -->
+  <swiper class="banner" indicator-dots autoplay interval="3000" circular indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#4caf7d">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <view class="banner-item" style="background:{{item.bg}}">
+        <view class="banner-content">
+          <text class="banner-title">{{item.title}}</text>
+          <text class="banner-sub">{{item.sub}}</text>
+        </view>
+        <text class="banner-emoji">{{item.emoji}}</text>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 今日参与人数 -->
+  <view class="card stats-bar">
+    <text class="stats-text">今天累计参与 <text class="text-primary stats-num">{{participantCount}}</text> 人</text>
+    <button class="btn-sm" style="width:180rpx" bindtap="goRecycle">立即回收</button>
+  </view>
+
+  <!-- 动态信息滚动 -->
+  <view class="card ticker-wrap">
+    <text class="ticker-icon">📢</text>
+    <scroll-view class="ticker-scroll" scroll-x>
+      <text class="ticker-text">{{tickerText}}</text>
+    </scroll-view>
+  </view>
+
+  <!-- 回收流程 -->
+  <view class="card">
+    <text class="section-title">回收流程</text>
+    <view class="steps">
+      <view class="step-item" wx:for="{{steps}}" wx:key="label">
+        <view class="step-icon-wrap">
+          <text class="step-icon">{{item.icon}}</text>
+        </view>
+        <text class="step-label">{{item.label}}</text>
+        <text class="step-arrow" wx:if="{{index < steps.length - 1}}">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 常见问题 -->
+  <view class="card faq-card">
+    <view class="faq-header">
+      <text class="section-title" style="padding:0">预约疑问</text>
+      <text class="faq-more text-primary" bindtap="showFaqModal">更多疑问 ›</text>
+    </view>
+    <view class="faq-list">
+      <view class="faq-item" wx:for="{{faqs}}" wx:key="index">
+        <text class="faq-num text-primary">{{index+1}}.</text>
+        <text>{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+</view>
+
+<!-- FAQ 弹窗 -->
+<view class="modal-mask" wx:if="{{showFaq}}" bindtap="hideFaqModal">
+  <view class="modal-box" catchtap>
+    <text class="modal-title">常见问题</text>
+    <view class="modal-faq-list">
+      <view class="modal-faq-item" wx:for="{{allFaqs}}" wx:key="index">
+        <text class="modal-faq-q">{{index+1}}. {{item.q}}</text>
+        <text class="modal-faq-a">{{item.a}}</text>
+      </view>
+    </view>
+    <button class="btn-primary" style="height:84rpx" bindtap="hideFaqModal">关闭</button>
+  </view>
+</view>

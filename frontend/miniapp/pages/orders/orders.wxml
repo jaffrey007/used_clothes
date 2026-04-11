@@ -1,0 +1,70 @@
+<!-- 订单列表 -->
+<view class="page">
+
+  <!-- Tab 筛选 -->
+  <view class="tabs">
+    <view
+      class="tab-item {{activeTab === item.val ? 'tab-active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="val"
+      bindtap="switchTab"
+      data-val="{{item.val}}"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{orders.length === 0 && !loading}}" class="empty">
+    <text class="empty-icon">📋</text>
+    <text>暂无订单</text>
+    <button class="btn-sm" style="margin-top:20rpx" bindtap="goRecycle">去预约回收</button>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <view
+      class="card order-card"
+      wx:for="{{orders}}"
+      wx:key="id"
+      bindtap="goDetail"
+      data-id="{{item.id}}"
+    >
+      <!-- 头部：单号 + 状态 -->
+      <view class="order-hd">
+        <text class="order-no">订单 {{item.order_no}}</text>
+        <view class="tag {{item.statusCls}}">{{item.statusLabel}}</view>
+      </view>
+
+      <!-- 品类 -->
+      <view class="order-cats">
+        <view class="cat-tag" wx:for="{{item.catLabels}}" wx:key="*this" wx:for-item="cat">
+          {{cat}}
+        </view>
+      </view>
+
+      <!-- 地址 + 时间 -->
+      <view class="order-meta">
+        <text class="meta-row">📅 {{item.scheduledTimeStr}}</text>
+        <text class="meta-row">📍 {{item.addr_full}}</text>
+      </view>
+
+      <!-- 底部：日期 + 操作 -->
+      <view class="order-ft">
+        <text class="order-date">{{item.createdDateStr}}</text>
+        <view class="order-actions">
+          <view
+            wx:if="{{item.status <= 1}}"
+            class="action-btn action-cancel"
+            catchtap="cancelOrder"
+            data-id="{{item.id}}"
+          >取消订单</view>
+          <view class="action-btn action-detail">查看详情</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+  <view wx:if="{{noMore && orders.length > 0}}" class="loading-tip">没有更多了</view>
+
+</view>

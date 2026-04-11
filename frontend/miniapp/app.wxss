@@ -1,0 +1,116 @@
+/* 全局样式 */
+page {
+  background: #f5f5f5;
+  font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  font-size: 28rpx;
+  color: #1a1a1a;
+  box-sizing: border-box;
+}
+
+/* ──────────────────────────────
+   微信小程序 button 基础重置
+   用 flex 居中替代 line-height，兼容所有机型
+   ────────────────────────────── */
+button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50rpx;
+  font-size: 30rpx;
+  padding: 0;
+  margin: 0;
+  line-height: 1 !important;
+  box-sizing: border-box;
+}
+
+button::after {
+  border: none !important;
+}
+
+/* 通用主色按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, #4caf7d, #2e7d52) !important;
+  color: #fff !important;
+  border: none !important;
+  height: 90rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 50rpx;
+  width: 100%;
+}
+
+/* 小型按钮（tabBar 旁等） */
+.btn-sm {
+  background: #4caf7d !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  height: 64rpx;
+  min-width: 120rpx;
+  padding: 0 30rpx;
+}
+
+/* 通用卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx 24rpx;
+  overflow: hidden;
+}
+
+/* 通用页面容器 */
+.page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 段落标题 */
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  padding: 28rpx 30rpx 16rpx;
+}
+
+/* 主色 */
+.text-primary { color: #4caf7d; }
+.text-gray    { color: #999; }
+.text-red     { color: #ee0a24; }
+
+/* 间隔线 */
+.divider {
+  height: 1rpx;
+  background: #f0f0f0;
+  margin: 0 30rpx;
+}
+
+/* 状态标签 */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.tag-pending  { background: #fff3e8; color: #ff976a; }
+.tag-accepted { background: #e8f4ff; color: #1989fa; }
+.tag-going    { background: #f0eeff; color: #7d6ef7; }
+.tag-done     { background: #e8f5ee; color: #4caf7d; }
+.tag-cancel   { background: #f5f5f5; color: #999; }
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+  color: #bbb;
+  font-size: 26rpx;
+}
+
+.empty-icon { font-size: 100rpx; margin-bottom: 20rpx; }
