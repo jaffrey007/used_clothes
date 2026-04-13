@@ -9,9 +9,9 @@
     <button
       class="btn-primary wx-login-btn"
       bindtap="handleLogin"
-      loading="{{logging}}"
+      disabled="{{logging}}"
     >
-      微信一键登录
+      {{logging ? '正在登录...' : '微信一键登录'}}
     </button>
     <text class="gate-hint">登录即同意《用户服务协议》与《隐私政策》</text>
   </view>

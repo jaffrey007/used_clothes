@@ -59,6 +59,6 @@
       <text class="fl">设为默认</text>
       <switch checked="{{form.is_default}}" bindchange="onDefaultChange" color="#4caf7d" />
     </view>
-    <button class="btn-primary" style="margin-top:20rpx;height:84rpx" bindtap="saveAddress" loading="{{saving}}">保存</button>
+    <button class="btn-primary" style="margin-top:20rpx;height:84rpx" bindtap="saveAddress" disabled="{{saving}}">{{saving ? '保存中...' : '保存'}}</button>
   </view>
 </view>
