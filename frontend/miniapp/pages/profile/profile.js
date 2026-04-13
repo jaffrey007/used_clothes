@@ -31,32 +31,34 @@ Page({
   onShow() {
     const app = getApp()
     const loggedIn = !!app.globalData.isLoggedIn
-    // 只在状态真正变化时才 setData，避免无意义重绘导致闪烁
     if (loggedIn !== this.data.isLoggedIn) {
       this.setData({ isLoggedIn: loggedIn })
     }
-    if (loggedIn) {
-      this._loadUser()
-    }
+    if (loggedIn) this._loadUser()
   },
 
-  // ── 微信一键登录 ──
+  // ── 微信一键登录（全部合并为一次 setData，杜绝闪烁）──
   async handleLogin() {
+    if (this.data.logging) return
     this.setData({ logging: true })
     try {
       const app = getApp()
       const userInfo = await app.doLogin()
+      const kg = parseFloat((userInfo || {}).total_recycled_kg) || 0
+
+      // 一次性设置所有状态，只触发一次渲染
       this.setData({
+        logging: false,
         isLoggedIn: true,
         userInfo: userInfo || {},
+        recycleCount: Math.floor(kg) || 0,
+        carbonKg: (kg * 3.6).toFixed(1),
       })
-      this._updateEco(userInfo)
 
-      // 首次登录（昵称为默认"新用户"）→ 引导完善资料
       const isNewUser = !userInfo || userInfo.nickname === '新用户' || !userInfo.nickname
       if (isNewUser) {
         wx.showModal({
-          title: '登录成功 🎉',
+          title: '登录成功',
           content: '欢迎使用慢夏回收！请完善您的昵称和头像',
           confirmText: '去完善',
           cancelText: '稍后',
@@ -71,38 +73,31 @@ Page({
       }
     } catch (e) {
       console.error('login failed', e)
-      wx.showToast({ title: '登录失败，请检查网络后重试', icon: 'none', duration: 2500 })
-    } finally {
       this.setData({ logging: false })
+      wx.showToast({ title: '登录失败，请检查网络后重试', icon: 'none', duration: 2500 })
     }
   },
 
+  // ── 加载用户（也只做一次 setData）──
   async _loadUser() {
     try {
       const res = await api.getMe()
       const u = res.data
-      this.setData({ userInfo: u })
-      this._updateEco(u)
-      // 同步到全局
+      const kg = parseFloat(u.total_recycled_kg) || 0
       getApp().globalData.userInfo = u
+      this.setData({
+        userInfo: u,
+        recycleCount: Math.floor(kg) || 0,
+        carbonKg: (kg * 3.6).toFixed(1),
+      })
     } catch (e) {
       console.warn('load user failed', e)
-      // token 已失效，退到未登录状态
       if (e && e.message && e.message.includes('401')) {
         clearToken()
         getApp().globalData.isLoggedIn = false
         this.setData({ isLoggedIn: false })
       }
     }
-  },
-
-  _updateEco(u) {
-    if (!u) return
-    const kg = parseFloat(u.total_recycled_kg) || 0
-    this.setData({
-      recycleCount: Math.floor(kg) || 0,
-      carbonKg: (kg * 3.6).toFixed(1),
-    })
   },
 
   goEdit() {
