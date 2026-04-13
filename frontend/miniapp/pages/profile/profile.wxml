@@ -1,7 +1,7 @@
 <!-- 个人中心 -->
 
 <!-- ══ 未登录状态 ══ -->
-<view class="login-gate" wx:if="{{!isLoggedIn}}">
+<view class="login-gate" hidden="{{isLoggedIn}}">
   <view class="login-gate-inner">
     <text class="gate-emoji">♻️</text>
     <text class="gate-title">慢夏回收</text>
@@ -18,7 +18,7 @@
 </view>
 
 <!-- ══ 已登录状态 ══ -->
-<view class="page profile-page" wx:else>
+<view class="page profile-page" hidden="{{!isLoggedIn}}">
 
   <!-- 用户头部 -->
   <view class="profile-header">

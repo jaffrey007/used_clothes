@@ -39,7 +39,7 @@
 .gate-hint { font-size: 22rpx; color: #bbb; }
 
 /* ─── 已登录 profile ─── */
-.profile-page { padding-bottom: 60rpx; }
+.profile-page { padding-bottom: 60rpx; background: #f5f5f5; }
 
 /* Header */
 .profile-header {
