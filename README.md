@@ -95,7 +95,7 @@ cp .env.example .env
 # DATABASE_URL=mysql+pymysql://root:你的密码@localhost:3306/manxia
 
 # 4. 启动服务
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8000 --host 0.0.0.0
 ```
 
 后端启动后可访问：

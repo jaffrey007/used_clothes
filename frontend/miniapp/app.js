@@ -37,8 +37,8 @@ App({
   },
 
   async fetchUserInfo() {
-    const { request } = require('./utils/api')
-    const res = await request({ url: '/api/users/me' })
+    const { silentRequest } = require('./utils/api')
+    const res = await silentRequest({ url: '/api/users/me' })
     this.globalData.userInfo = res.data
     return res.data
   },
