@@ -54,8 +54,8 @@
   </view>
 
   <view style="padding:40rpx 30rpx 0">
-    <button class="btn-primary" style="height:96rpx;font-size:32rpx" bindtap="handleSave" loading="{{saving}}">
-      保存
+    <button class="btn-primary" style="height:96rpx;font-size:32rpx" bindtap="handleSave" disabled="{{saving}}">
+      {{saving ? '保存中...' : '保存'}}
     </button>
   </view>
 

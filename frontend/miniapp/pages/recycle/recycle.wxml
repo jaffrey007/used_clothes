@@ -107,8 +107,8 @@
 
 <!-- 底部提交栏 -->
 <view class="submit-bar">
-  <button class="btn-primary submit-btn" bindtap="handleSubmit" loading="{{submitting}}">
-    立即预约（免费上门）
+  <button class="btn-primary submit-btn" bindtap="handleSubmit" disabled="{{submitting}}">
+    {{submitting ? '提交中...' : '立即预约（免费上门）'}}
   </button>
 </view>
 
