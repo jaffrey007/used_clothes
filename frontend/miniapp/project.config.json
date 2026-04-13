@@ -1,5 +1,5 @@
 {
-  "appid": "touristappid",
+  "appid": "wx20a04efa8f032cbf",
   "projectname": "manxia-recycling",
   "description": "慢夏闲置衣服回收平台",
   "setting": {
@@ -44,7 +44,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "3.3.4",
+  "libVersion": "3.15.2",
   "srcMiniprogramRoot": "",
   "condition": {},
   "simulatorPluginLibVersion": {},
