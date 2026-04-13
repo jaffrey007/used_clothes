@@ -30,8 +30,11 @@ Page({
 
   onShow() {
     const app = getApp()
-    const loggedIn = app.globalData.isLoggedIn
-    this.setData({ isLoggedIn: loggedIn })
+    const loggedIn = !!app.globalData.isLoggedIn
+    // 只在状态真正变化时才 setData，避免无意义重绘导致闪烁
+    if (loggedIn !== this.data.isLoggedIn) {
+      this.setData({ isLoggedIn: loggedIn })
+    }
     if (loggedIn) {
       this._loadUser()
     }

@@ -1,11 +1,13 @@
 /* ─── 未登录引导页 ─── */
 .login-gate {
-  min-height: 100vh;
+  /* 100vh 在有 tabBar 的页面会超出可视区，改用 padding 撑开即可 */
+  min-height: 80vh;
   background: linear-gradient(160deg, #e8f5ee 0%, #f5f5f5 60%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40rpx;
+  padding: 80rpx 40rpx 120rpx;
+  box-sizing: border-box;
 }
 
 .login-gate-inner {

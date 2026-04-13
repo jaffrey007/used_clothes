@@ -4,7 +4,8 @@ App({
   globalData: {
     userInfo: null,
     isLoggedIn: false,
-    apiBase: 'http://localhost:8000',
+    // 本地调试用 localhost；局域网演示改成你的 IP，如 'http://192.168.1.8:8000'
+    apiBase: 'http://192.168.1.8:8000',
   },
 
   onLaunch() {

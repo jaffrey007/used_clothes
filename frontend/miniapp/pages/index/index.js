@@ -31,8 +31,12 @@ Page({
   },
 
   onLoad() {
-    // 确保登录
-    ensureLogin().catch(() => {})
+    // 静默登录，成功后同步全局状态，避免"我的"页反复闪烁
+    const app = getApp()
+    ensureLogin()
+      .then(() => app.fetchUserInfo())
+      .then(() => { app.globalData.isLoggedIn = true })
+      .catch(() => {})
 
     // 模拟参与人数动态增加
     this._timer = setInterval(() => {
