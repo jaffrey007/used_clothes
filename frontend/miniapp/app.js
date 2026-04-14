@@ -6,6 +6,7 @@ App({
     isLoggedIn: false,
     // 本地调试用 localhost；局域网演示改成你的 IP，如 'http://192.168.1.8:8000'
     apiBase: 'http://127.0.0.1:8000',
+   // apiBase: 'http://192.168.5.181:8000',
   },
 
   onLaunch() {
