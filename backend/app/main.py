@@ -27,9 +27,10 @@ app.include_router(orders.router)
 app.include_router(points.router)
 app.include_router(admin.router)
 
-# 静态文件（用户上传的头像）
+# 静态文件（用户上传的头像 / 订单凭证图片）
 _static_dir = os.path.join(os.path.dirname(__file__), '..', 'static')
-os.makedirs(_static_dir, exist_ok=True)
+os.makedirs(os.path.join(_static_dir, 'avatars'), exist_ok=True)
+os.makedirs(os.path.join(_static_dir, 'proof'), exist_ok=True)
 app.mount("/static", StaticFiles(directory=_static_dir), name="static")
 
 

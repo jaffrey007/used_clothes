@@ -50,6 +50,14 @@ export const adminApi = {
   deleteRecycler: (id) => http.delete(`/api/admin/recyclers/${id}`),
   // Stats
   getStats: (params) => http.get('/api/admin/stats', { params }),
+  // Settlement
+  getSettlement: (year, month) => http.get('/api/admin/settlement', { params: { year, month } }),
+  // Proof images
+  uploadProof: (orderId, file) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    return http.post(`/api/admin/orders/${orderId}/proof`, fd)
+  },
 }
 
 export default http

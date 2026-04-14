@@ -41,24 +41,28 @@
     </view>
     <view class="form-divider"></view>
 
-    <!-- 预约日期：用 picker 包裹，点击自动弹出日期选择 -->
-    <picker mode="date" value="{{pickerDate}}" start="{{minDate}}" end="{{maxDate}}" bindchange="onDateChange">
+    <!-- 预约日期：只显示未来7天，用 selector 更直观 -->
+    <picker mode="selector" range="{{dateOptions}}" range-key="label" value="{{dateIdx}}" bindchange="onDateChange">
       <view class="form-row">
         <text class="form-label">预约日期</text>
         <view class="form-right">
-          <text class="{{selectedDate ? 'form-val' : 'form-placeholder'}}">{{selectedDate || '请选择预约日期'}}</text>
+          <text class="{{selectedDate ? 'form-val' : 'form-placeholder'}}">
+            {{dateIdx >= 0 ? dateOptions[dateIdx].label : '请选择预约日期'}}
+          </text>
           <text class="form-arrow">›</text>
         </view>
       </view>
     </picker>
     <view class="form-divider"></view>
 
-    <!-- 预约时段：selector picker -->
-    <picker mode="selector" range="{{timeSlots}}" value="{{timeSlotIdx}}" bindchange="onTimeSlotChange">
+    <!-- 取件时间：09:00-10:00 每小时一档 -->
+    <picker mode="selector" range="{{timeSlots}}" range-key="label" value="{{timeSlotIdx}}" bindchange="onTimeSlotChange">
       <view class="form-row">
-        <text class="form-label">取件时段</text>
+        <text class="form-label">取件时间</text>
         <view class="form-right">
-          <text class="{{selectedTimeSlot ? 'form-val' : 'form-placeholder'}}">{{selectedTimeSlot || '请选择取件时段'}}</text>
+          <text class="{{selectedTimeSlot ? 'form-val' : 'form-placeholder'}}">
+            {{timeSlotIdx >= 0 ? timeSlots[timeSlotIdx].label : '请选择取件时间'}}
+          </text>
           <text class="form-arrow">›</text>
         </view>
       </view>

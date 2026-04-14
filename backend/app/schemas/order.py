@@ -32,6 +32,7 @@ class OrderOut(BaseModel):
     order_no: str
     user_id: int
     recycler_id: Optional[int] = None
+    recycler_name: Optional[str] = None   # 冗余回收员姓名，前端直接用
     address_id: Optional[int] = None
     addr_contact: Optional[str] = None
     addr_phone: Optional[str] = None
@@ -44,6 +45,7 @@ class OrderOut(BaseModel):
     status: int
     notes: Optional[str] = None
     cancel_reason: Optional[str] = None
+    proof_images: Optional[str] = None    # JSON 数组字符串
     created_at: datetime
     updated_at: datetime
     categories: List[CategoryOut] = []
@@ -58,3 +60,4 @@ class OrderStatusUpdate(BaseModel):
     actual_weight: Optional[Decimal] = None
     recycler_id: Optional[int] = None
     cancel_reason: Optional[str] = None
+    proof_images: Optional[str] = None

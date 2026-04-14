@@ -31,6 +31,7 @@ class Order(Base):
     status: Mapped[int] = mapped_column(SmallInteger, nullable=False, default=0)
     notes: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     cancel_reason: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    proof_images: Mapped[Optional[str]] = mapped_column(String(2000), nullable=True, comment="JSON数组")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now()

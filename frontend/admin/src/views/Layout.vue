@@ -36,6 +36,10 @@
           <el-icon><TrendCharts /></el-icon>
           <template #title>数据统计</template>
         </el-menu-item>
+        <el-menu-item index="/settlement">
+          <el-icon><Money /></el-icon>
+          <template #title>回收员结算</template>
+        </el-menu-item>
       </el-menu>
 
       <div class="sidebar-footer">
@@ -87,6 +91,7 @@ const PAGE_TITLES = {
   users: '用户管理',
   recyclers: '回收员管理',
   stats: '数据统计',
+  settlement: '回收员结算',
 }
 
 const currentPageTitle = computed(() => {

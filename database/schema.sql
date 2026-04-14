@@ -1,7 +1,7 @@
 -- 慢夏闲置衣服回收平台 数据库脚本
 -- MySQL 8.0+
 -- 使用方式: mysql -u root -p < database/schema.sql
-
+drop database if exists manxia;
 CREATE DATABASE IF NOT EXISTS manxia DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE manxia;
 
@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS orders (
                      COMMENT '0=待接单 1=已接单 2=回收中 3=已完成 4=已取消',
     notes            VARCHAR(512) DEFAULT NULL,
     cancel_reason    VARCHAR(255) DEFAULT NULL,
+    proof_images     TEXT         DEFAULT NULL COMMENT '回收员上传凭证图片(JSON数组)',
     created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_user (user_id),
@@ -182,3 +183,7 @@ INSERT INTO points_records (user_id, order_id, change_type, amount, balance_afte
 (1, 1, 'earn', 180, 180, '订单MX20240401001完成奖励'),
 (1, NULL, 'earn', 20, 200, '注册奖励'),
 (1, NULL, 'redeem', -80, 120, '积分兑换现金券');
+
+-- ─── 升级迁移（已有数据库执行此段） ────────────────────────────────────────────
+-- 如果已有旧版数据库，执行以下语句添加新字段（新建数据库从头执行 schema.sql 无需此段）
+-- ALTER TABLE orders ADD COLUMN proof_images TEXT DEFAULT NULL COMMENT '回收员上传凭证图片(JSON数组)';
