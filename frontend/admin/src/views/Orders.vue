@@ -21,10 +21,10 @@
         <el-table-column label="联系人" width="90">
           <template #default="{ row }">{{ row.addr_contact || '-' }}</template>
         </el-table-column>
-        <el-table-column label="取件地址" min-width="200" show-overflow-tooltip>
+        <el-table-column label="取件地址" min-width="180" show-overflow-tooltip>
           <template #default="{ row }">{{ row.addr_full }}</template>
         </el-table-column>
-        <el-table-column label="预约时间" width="150">
+        <el-table-column label="预约时间" width="140">
           <template #default="{ row }">{{ formatDT(row.scheduled_time) }}</template>
         </el-table-column>
         <el-table-column label="状态" width="90">
@@ -34,25 +34,46 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="回收员" width="100">
+        <el-table-column label="回收员" width="90">
           <template #default="{ row }">
             <span v-if="row.recycler_name" style="font-weight:600;color:#333">{{ row.recycler_name }}</span>
             <span v-else style="color:#aaa">未指派</span>
           </template>
         </el-table-column>
-        <el-table-column label="实重(kg)" width="90">
+        <el-table-column label="实重(kg)" width="85" align="right">
           <template #default="{ row }">{{ row.actual_weight || '-' }}</template>
         </el-table-column>
-        <el-table-column label="金额(¥)" width="90">
+        <el-table-column label="金额(¥)" width="85" align="right">
           <template #default="{ row }">{{ row.final_amount || '-' }}</template>
         </el-table-column>
-        <el-table-column label="凭证" width="70">
+
+        <!-- 凭证图片列：直接显示缩略图，可点击放大 -->
+        <el-table-column label="回收凭证" width="140">
           <template #default="{ row }">
-            <el-tag v-if="proofCount(row) > 0" type="success" size="small">{{ proofCount(row) }}张</el-tag>
-            <span v-else style="color:#ccc">-</span>
+            <div v-if="parseProof(row).length" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+              <el-image
+                v-for="(img, i) in parseProof(row)"
+                :key="i"
+                :src="apiBase + img"
+                :preview-src-list="parseProof(row).map(p => apiBase + p)"
+                :initial-index="i"
+                preview-teleported
+                fit="cover"
+                style="width:40px;height:40px;border-radius:4px;border:1px solid #eee;cursor:zoom-in"
+              />
+            </div>
+            <el-button
+              v-else
+              size="small"
+              type="primary"
+              link
+              @click="openEdit(row)"
+              style="color:#aaa;font-size:12px"
+            >去上传</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" width="110">
+
+        <el-table-column label="创建时间" width="100">
           <template #default="{ row }">{{ formatDate(row.created_at) }}</template>
         </el-table-column>
         <el-table-column label="操作" width="80" fixed="right">
@@ -72,7 +93,7 @@
       />
     </div>
 
-    <!-- Edit dialog -->
+    <!-- 处理订单弹窗 -->
     <el-dialog v-model="showEdit" title="处理订单" width="580px" :close-on-click-modal="false">
       <el-form :model="editForm" label-width="110px">
         <el-form-item label="订单号">
@@ -109,28 +130,45 @@
         <el-form-item v-if="editForm.status === 4" label="取消原因">
           <el-input v-model="editForm.cancel_reason" placeholder="选填" />
         </el-form-item>
-        <el-divider>回收凭证图片（防止作弊）</el-divider>
+
+        <el-divider>回收凭证图片</el-divider>
         <el-form-item label="上传凭证">
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-            <el-image
-              v-for="(img, i) in proofList"
+          <!-- 已有图片预览 -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+            <div
+              v-for="(img, i) in dialogProofList"
               :key="i"
-              :src="apiBase + img"
-              :preview-src-list="proofList.map(p => apiBase + p)"
-              :initial-index="i"
-              fit="cover"
-              style="width:80px;height:80px;border-radius:6px;border:1px solid #eee"
-            />
-            <el-upload
-              :show-file-list="false"
-              accept="image/*"
-              :before-upload="beforeUpload"
-              style="display:inline-block"
+              style="position:relative;width:80px;height:80px"
             >
-              <el-button size="small" :loading="uploading">+ 上传图片</el-button>
-            </el-upload>
+              <el-image
+                :src="apiBase + img"
+                :preview-src-list="dialogProofList.map(p => apiBase + p)"
+                :initial-index="i"
+                preview-teleported
+                fit="cover"
+                style="width:80px;height:80px;border-radius:6px;border:1px solid #eee;cursor:zoom-in"
+              />
+              <div
+                @click="removeProof(i)"
+                style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:#f56c6c;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;line-height:1"
+              >×</div>
+            </div>
           </div>
-          <div style="font-size:12px;color:#aaa;margin-top:4px">上传后立即保存，用于记录回收员的实际取件凭证</div>
+
+          <!-- 上传按钮 -->
+          <el-upload
+            :show-file-list="false"
+            accept="image/*"
+            :before-upload="beforeUpload"
+            drag
+            style="width:100%"
+          >
+            <div style="padding:12px 0;color:#999;font-size:13px">
+              <el-icon style="font-size:24px;color:#c0c4cc"><UploadFilled /></el-icon>
+              <div style="margin-top:6px">{{ uploading ? '上传中...' : '点击或拖拽图片到此处上传' }}</div>
+              <div style="font-size:11px;margin-top:4px;color:#ccc">支持 JPG / PNG，上传后立即保存至服务器</div>
+            </div>
+          </el-upload>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -169,14 +207,15 @@ const STATUS = {
   4: { label: '已取消', color: '#999' },
 }
 
-// 当前编辑订单的凭证图片列表
-const proofList = computed(() => {
+// 解析 proof_images JSON，供表格列用
+function parseProof(row) {
+  try { return JSON.parse(row.proof_images || '[]') } catch { return [] }
+}
+
+// 弹窗内编辑中的凭证列表
+const dialogProofList = computed(() => {
   try { return JSON.parse(editForm.value.proof_images || '[]') } catch { return [] }
 })
-
-function proofCount(row) {
-  try { return JSON.parse(row.proof_images || '[]').length } catch { return 0 }
-}
 
 function statusLabel(s) { return STATUS[s]?.label || '未知' }
 function statusColor(s) { return STATUS[s]?.color || '#999' }
@@ -225,27 +264,38 @@ function openEdit(row) {
   showEdit.value = true
 }
 
+// 上传凭证图片（el-upload before-upload 钩子，返回 false 阻止自动上传）
 async function beforeUpload(file) {
   uploading.value = true
   try {
     const res = await adminApi.uploadProof(editForm.value.id, file)
-    editForm.value.proof_images = JSON.stringify(res.data.all)
-    // 同步更新列表中的订单
+    const newList = res.data.all   // 后端返回最新的完整数组
+    editForm.value.proof_images = JSON.stringify(newList)
+    // 同步更新列表行
     const idx = orders.value.findIndex(o => o.id === editForm.value.id)
     if (idx >= 0) orders.value[idx].proof_images = editForm.value.proof_images
-    ElMessage.success('图片上传成功')
+    ElMessage.success('上传成功')
   } catch {
-    ElMessage.error('图片上传失败')
+    ElMessage.error('上传失败，请检查后端服务')
   } finally {
     uploading.value = false
   }
-  return false  // 阻止 el-upload 的默认行为
+  return false
+}
+
+// 删除凭证图片（仅前端移除，保存时同步给后端）
+function removeProof(index) {
+  const list = dialogProofList.value.filter((_, i) => i !== index)
+  editForm.value.proof_images = JSON.stringify(list)
 }
 
 async function handleSave() {
   saving.value = true
   try {
-    const payload = { status: editForm.value.status }
+    const payload = {
+      status: editForm.value.status,
+      proof_images: editForm.value.proof_images,
+    }
     if (editForm.value.recycler_id) payload.recycler_id = editForm.value.recycler_id
     if (editForm.value.actual_weight != null) payload.actual_weight = editForm.value.actual_weight
     if (editForm.value.cancel_reason) payload.cancel_reason = editForm.value.cancel_reason
