@@ -16,6 +16,8 @@ Page({
     actualWeight: '',
     currentOrderId: null,
     currentOrderIdx: null,
+    showResult: false,
+    resultData: {},
     apiBase: '',
   },
 
@@ -106,6 +108,22 @@ Page({
     }
   },
 
+  // ── 确认接单（将状态从 0→1）────────────────────────────────────────────────
+
+  async acceptOrder(e) {
+    const { orderid, idx } = e.currentTarget.dataset
+    try {
+      await this._recyclerRequest('POST', `/api/recycler/orders/${orderid}/accept`)
+      const orders = this.data.orders
+      orders[idx].status = 1
+      orders[idx].status_label = '已接单'
+      this.setData({ orders })
+      wx.showToast({ title: '已接单', icon: 'success' })
+    } catch {
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
+  },
+
   // ── 图片预览 ──────────────────────────────────────────────────────────────
 
   previewImg(e) {
@@ -165,12 +183,30 @@ Page({
     if (!w || w <= 0) { wx.showToast({ title: '请输入正确重量', icon: 'none' }); return }
     this.setData({ completing: true })
     try {
-      await this._recyclerRequest('POST', `/api/recycler/orders/${this.data.currentOrderId}/complete`, { actual_weight: w })
-      wx.showToast({ title: '提交成功，等待确认', icon: 'success' })
-      this.setData({ showComplete: false })
-      setTimeout(() => this._loadOrders(), 800)
-    } catch { wx.showToast({ title: '提交失败', icon: 'none' }) }
-    finally { this.setData({ completing: false }) }
+      const res = await this._recyclerRequest(
+        'POST',
+        `/api/recycler/orders/${this.data.currentOrderId}/complete`,
+        { actual_weight: w }
+      )
+      this.setData({
+        showComplete: false,
+        completing: false,
+        showResult: true,
+        resultData: res.data,
+      })
+      // 把该订单从进行中移除（已完成）
+      const orders = this.data.orders.filter(o => o.id !== this.data.currentOrderId)
+      this.setData({ orders })
+    } catch (e) {
+      const msg = (e && e.detail) ? e.detail : '提交失败，请重试'
+      wx.showToast({ title: msg, icon: 'none', duration: 2500 })
+    } finally {
+      this.setData({ completing: false })
+    }
+  },
+
+  closeResult() {
+    this.setData({ showResult: false })
   },
 
   // ── 退出 ─────────────────────────────────────────────────────────────────

@@ -128,7 +128,8 @@ def recycler_orders(
     if status is not None:
         q = q.filter(Order.status == status)
     else:
-        q = q.filter(Order.status.in_([1, 2]))  # 已接单、回收中
+        # 进行中：含"待接单(0)"——管理员可能只指派了人但未改状态
+        q = q.filter(Order.status.in_([0, 1, 2]))
     orders = q.order_by(Order.scheduled_time.asc()).all()
 
     STATUS_LABELS = {0: '待接单', 1: '已接单', 2: '回收中', 3: '已完成', 4: '已取消'}
@@ -155,6 +156,27 @@ def recycler_orders(
             "categories": [{"category": c.category, "qty": c.qty} for c in o.categories],
         })
     return Resp.ok(result)
+
+
+# ── 确认接单 ─────────────────────────────────────────────────────────────────
+
+@router.post("/orders/{order_id}/accept", response_model=Resp[dict])
+def recycler_accept(
+    order_id: int,
+    r: Recycler = Depends(get_current_recycler),
+    db: Session = Depends(get_db),
+):
+    """回收员确认接单，状态从 0(待接单) → 1(已接单)"""
+    order = db.query(Order).filter(
+        Order.id == order_id,
+        Order.recycler_id == r.id,
+        Order.status == 0,
+    ).first()
+    if not order:
+        raise HTTPException(404, "订单不存在或已接单")
+    order.status = 1
+    db.commit()
+    return Resp.ok({"msg": "接单成功"})
 
 
 # ── 上传凭证图片 ───────────────────────────────────────────────────────────────
@@ -189,8 +211,8 @@ async def upload_proof(
     imgs.append(url)
     order.proof_images = json.dumps(imgs)
 
-    # 上传凭证后自动将状态推进到"回收中"
-    if order.status == 1:
+    # 上传凭证后自动推进状态：待接单/已接单 → 回收中
+    if order.status in (0, 1):
         order.status = 2
 
     db.commit()
@@ -210,15 +232,58 @@ def recycler_complete(
     r: Recycler = Depends(get_current_recycler),
     db: Session = Depends(get_db),
 ):
-    """回收员填报实际重量，等待管理员最终确认完成"""
+    """
+    回收员填报实际重量并标记已完成：
+    - 需已上传至少一张凭证图片
+    - 自动计算结算金额、给用户积分、更新回收员累计单量
+    """
+    from app.models.user import User
+    from app.models.points import PointsRecord
+
     order = db.query(Order).filter(
         Order.id == order_id,
         Order.recycler_id == r.id,
-        Order.status.in_([1, 2]),
+        Order.status.in_([0, 1, 2]),
     ).first()
     if not order:
-        raise HTTPException(404, "订单不存在或状态不允许操作")
+        raise HTTPException(404, "订单不存在或已完成")
+
+    # 必须先上传凭证才能完成
+    proof = []
+    try:
+        proof = json.loads(order.proof_images or '[]')
+    except Exception:
+        pass
+    if not proof:
+        raise HTTPException(400, "请先上传取件凭证图片再标记完成")
+
+    # 填写重量、结算金额
     order.actual_weight = body.actual_weight
-    order.status = 2  # 回收中，等待管理员确认完成
+    order.final_amount = round(float(body.actual_weight) * float(order.unit_price), 2)
+    order.status = 3  # 已完成
+
+    # 给用户积分（每 kg 得 10 分）
+    user = db.get(User, order.user_id)
+    if user:
+        user.total_recycled_kg = float(user.total_recycled_kg or 0) + float(body.actual_weight)
+        pts = int(float(body.actual_weight) * 10)
+        user.points = (user.points or 0) + pts
+        db.add(PointsRecord(
+            user_id=user.id,
+            order_id=order.id,
+            change_type="earn",
+            amount=pts,
+            balance_after=user.points,
+            note=f"订单{order.order_no}回收完成奖励",
+        ))
+
+    # 更新回收员累计单量
+    r.order_count = (r.order_count or 0) + 1
+
     db.commit()
-    return Resp.ok({"msg": "已提交，等待管理员确认"})
+    return Resp.ok({
+        "msg": "订单已完成",
+        "actual_weight": float(body.actual_weight),
+        "final_amount": float(order.final_amount),
+        "points_earned": int(float(body.actual_weight) * 10),
+    })

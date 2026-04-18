@@ -91,6 +91,20 @@ page { background: #f0faf5; }
 .proof-imgs { display: flex; gap: 12rpx; flex-wrap: wrap; }
 .proof-img { width: 120rpx; height: 120rpx; border-radius: 10rpx; border: 1rpx solid #eee; }
 
+/* ── 提示条 ── */
+.tip-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16rpx 20rpx; border-radius: 12rpx; margin-top: 20rpx;
+  font-size: 26rpx;
+}
+.tip-pending { background: #fff8e1; color: #f59e0b; }
+.tip-waiting { background: #e3f0ff; color: #1989fa; }
+.btn-sm-green {
+  background: #4caf7d; color: #fff; font-size: 24rpx;
+  padding: 8rpx 24rpx; border-radius: 24rpx; border: none;
+  height: 56rpx; line-height: 40rpx;
+}
+
 /* ── 操作按钮 ── */
 .action-row { display: flex; gap: 16rpx; margin-top: 24rpx; padding-top: 20rpx; border-top: 1rpx solid #f5f5f5; }
 .btn-upload {
@@ -101,6 +115,8 @@ page { background: #f0faf5; }
   flex: 1; height: 80rpx; background: #4caf7d; color: #fff;
   border-radius: 40rpx; font-size: 28rpx; border: none; font-weight: 600;
 }
+.btn-disabled { background: #ccc !important; }
+.btn-complete[disabled] { background: #ccc; }
 
 /* ── 退出 ── */
 .logout-btn {
@@ -128,3 +144,40 @@ page { background: #f0faf5; }
 .modal-cancel { background: #f5f5f5; color: #666; }
 .modal-confirm { background: #4caf7d; color: #fff; font-weight: 600; }
 .modal-confirm[disabled] { opacity: 0.6; }
+
+/* ── 步骤提示 ── */
+.step-hint {
+  display: flex; align-items: center; gap: 0;
+  margin: 20rpx 0 16rpx; padding: 16rpx 0;
+  border-top: 1rpx solid #f5f5f5;
+}
+.step { display: flex; align-items: center; gap: 10rpx; flex-shrink: 0; }
+.step-num {
+  width: 40rpx; height: 40rpx; border-radius: 20rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22rpx; font-weight: 700;
+}
+.step-active .step-num { background: #4caf7d; color: #fff; }
+.step-done .step-num   { background: #e8f5e9; color: #4caf7d; }
+.step-todo .step-num   { background: #f0f0f0; color: #bbb; }
+.step-text { font-size: 24rpx; }
+.step-active .step-text { color: #4caf7d; font-weight: 600; }
+.step-done .step-text   { color: #4caf7d; }
+.step-todo .step-text   { color: #bbb; }
+.step-line { flex: 1; height: 2rpx; background: #e8f5e9; margin: 0 12rpx; }
+.step-tip-text { font-size: 24rpx; color: #f59e0b; display: block; text-align: center; margin-top: 8rpx; }
+
+/* ── 完成结果卡 ── */
+.result-box {
+  background: #fff; border-radius: 24rpx; padding: 48rpx 40rpx;
+  width: 80%; box-sizing: border-box; text-align: center;
+}
+.result-icon { font-size: 80rpx; display: block; margin-bottom: 16rpx; }
+.result-title { font-size: 40rpx; font-weight: 700; color: #1a1a1a; display: block; margin-bottom: 32rpx; }
+.result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16rpx 0; border-bottom: 1rpx solid #f5f5f5;
+}
+.result-label { font-size: 28rpx; color: #888; }
+.result-val { font-size: 30rpx; font-weight: 600; color: #1a1a1a; }
+.result-money { color: #4caf7d; font-size: 34rpx; }

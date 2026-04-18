@@ -117,6 +117,9 @@ def admin_update_order(
     order.status = body.status
     if body.recycler_id is not None:
         order.recycler_id = body.recycler_id
+        # 指派回收员时，若仍是"待接单"自动推进为"已接单"
+        if body.status == 0:
+            order.status = 1
     if body.proof_images is not None:
         order.proof_images = body.proof_images
     if body.actual_weight is not None:
