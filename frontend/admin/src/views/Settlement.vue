@@ -17,6 +17,7 @@
       />
       <el-button type="primary" :loading="loading" @click="load"
         style="background:#4caf7d;border-color:#4caf7d">查询</el-button>
+      <el-button :icon="Download" @click="handleExport" :disabled="rows.length === 0">导出 Excel</el-button>
       <span style="color:#999;font-size:13px">· 平台结算价 0.6 元/kg，用户到手价 0.8 元/kg，利润 0.2 元/kg</span>
     </div>
 
@@ -77,7 +78,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
 import { adminApi } from '../api/index.js'
+import { exportExcel } from '../utils/excel.js'
 
 const rows = ref([])
 const loading = ref(false)
@@ -124,6 +127,20 @@ async function markSettled(row) {
   )
   settled.value[row.recycler_id] = true
   ElMessage.success(`已记录 ${row.name} 结算完成`)
+}
+
+function handleExport() {
+  exportExcel(rows.value, [
+    { header: '姓名',         key: 'name',            width: 12 },
+    { header: '手机号',       key: 'phone',           width: 14 },
+    { header: '负责区域',     key: 'area',            width: 20 },
+    { header: '完成订单数',   key: 'order_count',     width: 12 },
+    { header: '回收总量kg',   key: 'total_weight',    width: 14, format: v => Number(v).toFixed(2) },
+    { header: '用户实付¥',   key: 'total_amount',    width: 14, format: v => Number(v).toFixed(2) },
+    { header: '应付回收员¥', key: 'recycler_payout', width: 16, format: v => Number(v).toFixed(2) },
+    { header: '平台利润¥',   key: 'platform_profit', width: 14, format: v => Number(v).toFixed(2) },
+    { header: '结算状态',     key: 'recycler_id',     width: 10, format: (_, row) => settled.value[row.recycler_id] ? '已结算' : '未结算' },
+  ], `回收员结算_${period.value}`)
 }
 
 // 首次加载

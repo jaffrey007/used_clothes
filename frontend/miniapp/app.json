@@ -7,7 +7,8 @@
     "pages/profile/profile",
     "pages/profile-edit/profile-edit",
     "pages/address-list/address-list",
-    "pages/points/points"
+    "pages/points/points",
+    "pages/recycler-portal/recycler-portal"
   ],
   "tabBar": {
     "color": "#999999",

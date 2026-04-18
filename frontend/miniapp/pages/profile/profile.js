@@ -17,12 +17,12 @@ Page({
       { icon: '⭐', label: '待评价',   status: 3 },
     ],
     services: [
-      { icon: '📦', label: '商品订单',   action: 'noop' },
+      { icon: '📦', label: '我的订单',   action: 'orders' },
       { icon: '💬', label: '在线客服',   action: 'noop' },
       { icon: '📍', label: '地址管理',   action: 'address' },
       { icon: '📢', label: '投诉反馈',   action: 'noop' },
       { icon: '👤', label: '个人资料',   action: 'edit' },
-      { icon: '⚙️', label: '系统设置',   action: 'noop' },
+      { icon: '🚚', label: '回收员工作台', action: 'recycler' },
       { icon: '🔗', label: '分享',       action: 'invite' },
       { icon: '📣', label: '我的推广',   action: 'invite' },
     ],
@@ -120,7 +120,9 @@ Page({
     const action = e.currentTarget.dataset.action
     if (action === 'address') wx.navigateTo({ url: '/pages/address-list/address-list' })
     else if (action === 'edit') wx.navigateTo({ url: '/pages/profile-edit/profile-edit' })
+    else if (action === 'orders') wx.navigateTo({ url: '/pages/orders/orders' })
     else if (action === 'invite') this.setData({ showInviteModal: true })
+    else if (action === 'recycler') wx.navigateTo({ url: '/pages/recycler-portal/recycler-portal' })
     else wx.showToast({ title: '功能开发中', icon: 'none' })
   },
 

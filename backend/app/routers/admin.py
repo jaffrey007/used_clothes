@@ -83,13 +83,13 @@ def admin_list_orders(
     status: Optional[int] = Query(None),
     keyword: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=2000),
     db: Session = Depends(get_db),
     _: Admin = Depends(get_current_admin),
 ):
     q = db.query(Order).options(
         joinedload(Order.categories),
-        joinedload(Order.recycler),   # ← 预加载回收员
+        joinedload(Order.recycler),
     )
     if status is not None:
         q = q.filter(Order.status == status)
@@ -177,7 +177,7 @@ def admin_list_users(
     keyword: Optional[str] = Query(None),
     status: Optional[int] = Query(None),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=2000),
     db: Session = Depends(get_db),
     _: Admin = Depends(get_current_admin),
 ):
@@ -209,7 +209,7 @@ def admin_list_recyclers(
     keyword: Optional[str] = Query(None),
     status: Optional[int] = Query(None),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(20, ge=1, le=2000),
     db: Session = Depends(get_db),
     _: Admin = Depends(get_current_admin),
 ):

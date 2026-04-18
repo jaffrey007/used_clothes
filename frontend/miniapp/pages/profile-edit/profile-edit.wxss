@@ -70,3 +70,48 @@
 }
 
 .divider { height: 1rpx; background: #f0f0f0; }
+
+.field-val {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1a1a1a;
+  text-align: right;
+  padding-right: 16rpx;
+}
+
+.field-action {
+  font-size: 26rpx;
+  color: #4caf7d;
+  padding: 0 12rpx;
+  flex-shrink: 0;
+}
+
+.field-action-disabled { color: #ccc; }
+
+/* 微信一键获取手机号按钮（作为输入框代替使用） */
+.wx-phone-btn {
+  flex: 1;
+  height: 72rpx !important;
+  line-height: 72rpx !important;
+  font-size: 26rpx !important;
+  background: #e8f5e9 !important;
+  color: #4caf7d !important;
+  border-radius: 36rpx !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+.wx-phone-btn::after { border: none !important; }
+
+/* 取消/确认按钮 */
+.btn-ghost {
+  flex-shrink: 0;
+  width: 140rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  font-size: 26rpx;
+  background: #f5f5f5;
+  color: #666;
+  border-radius: 36rpx;
+  border: none;
+}

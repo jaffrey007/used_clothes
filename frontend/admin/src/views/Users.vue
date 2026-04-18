@@ -2,6 +2,7 @@
   <div>
     <div class="page-header">
       <h2 class="page-title">用户管理</h2>
+      <el-button :icon="Download" @click="handleExport">导出 Excel</el-button>
     </div>
 
     <div class="filter-bar" style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px">
@@ -66,7 +67,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
 import { adminApi } from '../api/index.js'
+import { exportExcel } from '../utils/excel.js'
 
 const users = ref([])
 const total = ref(0)
@@ -102,6 +105,23 @@ async function toggleStatus(row) {
   } catch {
     ElMessage.error('操作失败')
   }
+}
+
+async function handleExport() {
+  try {
+    const params = { page: 1, page_size: 1000 }
+    if (filter.value.keyword) params.keyword = filter.value.keyword
+    if (filter.value.status !== null && filter.value.status !== undefined) params.status = filter.value.status
+    const res = await adminApi.listUsers(params)
+    exportExcel(res.data || [], [
+      { header: '昵称',       key: 'nickname',          width: 16 },
+      { header: '手机号',     key: 'phone',             width: 14 },
+      { header: '积分',       key: 'points',            width: 10 },
+      { header: '累计回收kg', key: 'total_recycled_kg', width: 14, format: v => Number(v).toFixed(2) },
+      { header: '状态',       key: 'status',            width: 8,  format: v => v === 1 ? '正常' : '禁用' },
+      { header: '注册时间',   key: 'created_at',        width: 20, format: v => v ? new Date(v).toLocaleString('zh-CN') : '' },
+    ], '用户列表')
+  } catch { ElMessage.error('导出失败') }
 }
 
 onMounted(load)

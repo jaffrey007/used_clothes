@@ -2,9 +2,12 @@
   <div>
     <div class="page-header">
       <h2 class="page-title">回收员管理</h2>
-      <el-button type="primary" @click="openCreate" style="background:#4caf7d;border-color:#4caf7d">
-        <el-icon><Plus /></el-icon> 新增回收员
-      </el-button>
+      <div style="display:flex;gap:8px">
+        <el-button :icon="Download" @click="handleExport">导出 Excel</el-button>
+        <el-button type="primary" @click="openCreate" style="background:#4caf7d;border-color:#4caf7d">
+          <el-icon><Plus /></el-icon> 新增回收员
+        </el-button>
+      </div>
     </div>
 
     <div class="filter-bar" style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px">
@@ -96,7 +99,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
 import { adminApi } from '../api/index.js'
+import { exportExcel } from '../utils/excel.js'
 
 const recyclers = ref([])
 const total = ref(0)
@@ -169,6 +174,25 @@ async function handleDelete(row) {
   } catch {
     ElMessage.error('删除失败')
   }
+}
+
+async function handleExport() {
+  try {
+    const params = { page: 1, page_size: 1000 }
+    if (filter.value.keyword) params.keyword = filter.value.keyword
+    if (filter.value.status !== null && filter.value.status !== undefined) params.status = filter.value.status
+    const res = await adminApi.listRecyclers(params)
+    exportExcel(res.data || [], [
+      { header: '姓名',     key: 'name',        width: 12 },
+      { header: '手机号',   key: 'phone',       width: 14 },
+      { header: '身份证',   key: 'id_card',     width: 20 },
+      { header: '负责区域', key: 'area',        width: 24 },
+      { header: '状态',     key: 'status',      width: 8,  format: v => statusLabel(v) },
+      { header: '评分',     key: 'rating',      width: 8 },
+      { header: '完成订单', key: 'order_count', width: 10 },
+      { header: '创建时间', key: 'created_at',  width: 20, format: v => v ? new Date(v).toLocaleString('zh-CN') : '' },
+    ], '回收员列表')
+  } catch { ElMessage.error('导出失败') }
 }
 
 onMounted(load)

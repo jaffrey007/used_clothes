@@ -1,0 +1,137 @@
+<!-- 回收员工作台 -->
+
+<!-- ═══ 检测中 ═══ -->
+<view class="gate" hidden="{{recyclerInfo || checked}}">
+  <view class="gate-inner">
+    <text class="gate-emoji">🚚</text>
+    <text class="gate-title">正在验证身份...</text>
+  </view>
+</view>
+
+<!-- ═══ 无法进入（未登录 / 非回收员） ═══ -->
+<view class="gate" hidden="{{recyclerInfo || !checked}}">
+  <view class="gate-inner">
+    <text class="gate-emoji">🚫</text>
+    <text class="gate-title">{{gateMsg}}</text>
+    <text class="gate-sub">{{gateSub}}</text>
+    <button class="btn-go" bindtap="handleGateAction">{{gateBtnText}}</button>
+  </view>
+</view>
+
+<!-- ═══ 已登录 ═══ -->
+<view class="portal-page" hidden="{{!recyclerInfo}}">
+
+  <!-- 头部信息 -->
+  <view class="header-card">
+    <view class="header-top">
+      <view>
+        <text class="r-name">{{recyclerInfo.name}}</text>
+        <text class="r-area">负责区域：{{recyclerInfo.area}}</text>
+      </view>
+      <view class="stat-box">
+        <text class="stat-num">{{recyclerInfo.order_count}}</text>
+        <text class="stat-label">累计订单</text>
+      </view>
+    </view>
+    <view class="header-bottom">
+      <text class="r-phone">📱 {{recyclerInfo.phone}}</text>
+      <view class="rating-row">
+        <text class="rating-label">评分</text>
+        <text class="rating-val">⭐ {{recyclerInfo.rating}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tab-bar">
+    <view class="tab {{activeTab === 'ongoing' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="ongoing">进行中</view>
+    <view class="tab {{activeTab === 'done' ? 'tab-active' : ''}}"    bindtap="switchTab" data-tab="done">已完成</view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{orders.length === 0}}" class="empty-wrap">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">{{activeTab === 'ongoing' ? '暂无进行中的订单' : '暂无已完成订单'}}</text>
+  </view>
+
+  <view wx:else class="order-list">
+    <view class="order-card" wx:for="{{orders}}" wx:key="id">
+      <!-- 订单头 -->
+      <view class="order-head">
+        <text class="order-no">{{item.order_no}}</text>
+        <view class="status-tag status-{{item.status}}">{{item.status_label}}</view>
+      </view>
+      <!-- 联系信息 -->
+      <view class="info-row">
+        <text class="info-icon">👤</text>
+        <text class="info-text">{{item.addr_contact}}  {{item.addr_phone}}</text>
+        <button class="call-btn" open-type="makePhoneCall" phone-number="{{item.addr_phone}}">拨号</button>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">📍</text>
+        <text class="info-text">{{item.addr_full}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">⏰</text>
+        <text class="info-text">{{item.scheduled_time}}</text>
+      </view>
+      <view class="info-row" wx:if="{{item.notes}}">
+        <text class="info-icon">📝</text>
+        <text class="info-text" style="color:#888">{{item.notes}}</text>
+      </view>
+      <!-- 品类 -->
+      <view class="cat-row">
+        <view class="cat-chip" wx:for="{{item.categories}}" wx:key="category" wx:for-item="cat">
+          {{cat.category}} ×{{cat.qty}}
+        </view>
+        <text class="weight-hint">预估{{item.estimated_weight ? item.estimated_weight*10+'kg' : '待确认'}}</text>
+      </view>
+      <!-- 凭证图片 -->
+      <view class="proof-section" wx:if="{{item.proof_images.length > 0}}">
+        <text class="proof-title">已上传凭证（{{item.proof_images.length}}张）</text>
+        <view class="proof-imgs">
+          <image
+            class="proof-img"
+            wx:for="{{item.proof_images}}" wx:key="*this" wx:for-item="imgUrl"
+            src="{{apiBase + imgUrl}}"
+            mode="aspectFill"
+            bindtap="previewImg"
+            data-src="{{apiBase + imgUrl}}"
+            data-list="{{item.proof_images}}"
+            data-base="{{apiBase}}"
+          />
+        </view>
+      </view>
+      <!-- 操作 -->
+      <view class="action-row" wx:if="{{activeTab === 'ongoing'}}">
+        <button class="btn-upload" bindtap="chooseProofImg" data-orderid="{{item.id}}" data-idx="{{index}}">📷 上传凭证</button>
+        <button class="btn-complete" bindtap="openComplete" data-orderid="{{item.id}}" data-idx="{{index}}" wx:if="{{item.proof_images.length > 0}}">✅ 填报重量</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出 -->
+  <view style="padding:20rpx 24rpx 80rpx">
+    <button class="logout-btn" bindtap="handleLogout">退出工作台</button>
+  </view>
+</view>
+
+<!-- 填报重量弹窗 -->
+<view class="modal-mask" wx:if="{{showComplete}}" bindtap="closeComplete">
+  <view class="modal-box" catchtap>
+    <text class="modal-title">填报实际重量</text>
+    <text class="modal-sub">填报后等待管理员确认完成并结算</text>
+    <view class="weight-input-wrap">
+      <input class="weight-input" type="digit" placeholder="实际重量（kg）" value="{{actualWeight}}" bindinput="onWeightInput" />
+      <text class="weight-unit">kg</text>
+    </view>
+    <view class="modal-btns">
+      <button class="modal-btn modal-cancel" bindtap="closeComplete">取消</button>
+      <button class="modal-btn modal-confirm" bindtap="submitComplete" disabled="{{completing}}">{{completing ? '提交中...' : '确认提交'}}</button>
+    </view>
+  </view>
+</view>

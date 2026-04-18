@@ -2,6 +2,7 @@
   <div>
     <div class="page-header">
       <h2 class="page-title">订单管理</h2>
+      <el-button @click="handleExport" :icon="Download">导出 Excel</el-button>
     </div>
 
     <!-- Filters -->
@@ -183,7 +184,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Download } from '@element-plus/icons-vue'
 import { adminApi } from '../api/index.js'
+import { exportExcel } from '../utils/excel.js'
 
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
@@ -307,6 +310,33 @@ async function handleSave() {
     ElMessage.error('更新失败')
   } finally {
     saving.value = false
+  }
+}
+
+async function handleExport() {
+  // 导出当前筛选条件下的全部数据（最多 1000 条）
+  try {
+    const params = { page: 1, page_size: 1000 }
+    if (filter.value.keyword) params.keyword = filter.value.keyword
+    if (filter.value.status !== null && filter.value.status !== undefined) params.status = filter.value.status
+    const res = await adminApi.listOrders(params)
+    const data = res.data || []
+    exportExcel(data, [
+      { header: '订单号',     key: 'order_no',       width: 20 },
+      { header: '联系人',     key: 'addr_contact',    width: 12 },
+      { header: '联系电话',   key: 'addr_phone',      width: 14 },
+      { header: '取件地址',   key: 'addr_full',       width: 36 },
+      { header: '预约时间',   key: 'scheduled_time',  width: 20, format: v => v ? formatDT(v) : '' },
+      { header: '回收员',     key: 'recycler_name',   width: 12 },
+      { header: '状态',       key: 'status',          width: 10, format: v => statusLabel(v) },
+      { header: '预估重量kg', key: 'estimated_weight', width: 12 },
+      { header: '实际重量kg', key: 'actual_weight',   width: 12 },
+      { header: '金额¥',     key: 'final_amount',    width: 10 },
+      { header: '备注',       key: 'notes',           width: 24 },
+      { header: '创建时间',   key: 'created_at',      width: 20, format: v => v ? new Date(v).toLocaleString('zh-CN') : '' },
+    ], '订单列表')
+  } catch {
+    ElMessage.error('导出失败')
   }
 }
 

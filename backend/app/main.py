@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
-from app.routers import auth, users, orders, points, admin
+from app.routers import auth, users, orders, points, admin, recycler_portal
 
 app = FastAPI(
     title="慢夏闲置衣服回收平台 API",
@@ -26,6 +26,7 @@ app.include_router(users.router)
 app.include_router(orders.router)
 app.include_router(points.router)
 app.include_router(admin.router)
+app.include_router(recycler_portal.router)
 
 # 静态文件（用户上传的头像 / 订单凭证图片）
 _static_dir = os.path.join(os.path.dirname(__file__), '..', 'static')

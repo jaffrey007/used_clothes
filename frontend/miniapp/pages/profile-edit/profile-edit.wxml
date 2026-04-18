@@ -37,18 +37,58 @@
     </view>
     <view class="divider"></view>
 
-    <!-- 手机号：手动输入 -->
-    <view class="field-row">
+    <!-- 手机号：已绑定直接展示 -->
+    <view class="field-row" wx:if="{{phone && !editingPhone}}">
       <text class="field-label">手机号</text>
-      <input
-        class="field-input"
-        type="number"
-        placeholder="请输入手机号"
-        maxlength="11"
-        value="{{phone}}"
-        bindinput="onInput"
-        data-key="phone"
-      />
+      <text class="field-val">{{phone}}</text>
+      <text class="field-action" bindtap="onChangePhone">更换</text>
+    </view>
+
+    <!-- 手机号：绑定中 -->
+    <view wx:if="{{!phone || editingPhone}}">
+      <!-- 方式1: 微信一键授权（企业主体可用） -->
+      <view class="field-row">
+        <text class="field-label">手机号</text>
+        <button
+          class="wx-phone-btn"
+          open-type="getPhoneNumber"
+          bindgetphonenumber="onGetWxPhone"
+        >📱 使用微信绑定的手机号</button>
+      </view>
+      <view class="divider"></view>
+
+      <!-- 方式2: 短信验证码 -->
+      <view class="field-row">
+        <text class="field-label">手机号码</text>
+        <input
+          class="field-input"
+          type="number"
+          placeholder="输入手机号"
+          maxlength="11"
+          value="{{inputPhone}}"
+          bindinput="onPhoneInput"
+        />
+      </view>
+      <view class="divider"></view>
+      <view class="field-row">
+        <text class="field-label">验证码</text>
+        <input
+          class="field-input"
+          type="number"
+          placeholder="输入验证码"
+          maxlength="4"
+          value="{{smsCode}}"
+          bindinput="onCodeInput"
+        />
+        <text
+          class="field-action {{countDown > 0 ? 'field-action-disabled' : ''}}"
+          bindtap="sendSmsCode"
+        >{{countDown > 0 ? countDown + 's' : '发送验证码'}}</text>
+      </view>
+      <view style="padding:16rpx 0 0;display:flex;gap:16rpx">
+        <button class="btn-ghost" bindtap="cancelEditPhone" wx:if="{{phone}}">取消</button>
+        <button class="btn-primary" style="flex:1;height:72rpx;font-size:28rpx" bindtap="verifySmsCode">确定绑定</button>
+      </view>
     </view>
 
   </view>
