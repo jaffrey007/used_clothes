@@ -33,13 +33,21 @@ Page({
   // ── 身份核验 ──────────────────────────────────────────────────────────────
 
   async _checkIdentity() {
-    // 1. 优先使用已缓存的回收员 token（避免每次都请求）
-    const cachedInfo = wx.getStorageSync('recyclerInfo')
+    // 1. 有缓存 token 时先去后端校验，防止旧手机号缓存错配
     const cachedToken = wx.getStorageSync('recyclerToken')
-    if (cachedInfo && cachedToken) {
-      this.setData({ recyclerInfo: cachedInfo, checked: true })
-      this._loadOrders()
-      return
+    if (cachedToken) {
+      try {
+        const res = await this._request('GET', '/api/recycler/me', null, cachedToken)
+        // token 有效：以后端数据为准刷新缓存
+        wx.setStorageSync('recyclerInfo', res.data)
+        this.setData({ recyclerInfo: res.data, checked: true })
+        this._loadOrders()
+        return
+      } catch (_) {
+        // token 失效或账号不匹配，清除旧缓存
+        wx.removeStorageSync('recyclerToken')
+        wx.removeStorageSync('recyclerInfo')
+      }
     }
 
     // 2. 检查用户是否已微信登录（token key 与 auth.js 保持一致）
